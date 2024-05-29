@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Recommendation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Final Recommendation</h1>
+        <p>Based on your inputs, the recommended method is: <strong>{{ method }}</strong></p>
+        <div class="form-actions">
+            <form action="/second_level_back" method="post">
+                {% for key, value in session.get('second_data', {}).items() %}
+                    <input type="hidden" name="{{ key }}" value="{{ value }}">
+                {% endfor %}
+                <button type="submit">Back</button>
+            </form>
+            <a href="/" class="button">Start Over</a>
+        </div>
+    </div>
+</body>
+</html>

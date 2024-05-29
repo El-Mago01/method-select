@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Method Selection Tool</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Project Method Selection Tool</h1>
+        <form action="/recommend" method="post">
+            {% for param in parameters %}
+                <label for="{{ param.name }}">{{ param.name.replace('_', ' ').capitalize() }}:</label>
+                {% if param.type == 'select' %}
+                    <select id="{{ param.name }}" name="{{ param.name }}" required>
+                        {% for option in param.options %}
+                            <option value="{{ option }}" {% if data.get(param.name) == option %}selected{% endif %}>{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                {% elif param.type == 'number' %}
+                    <input type="number" id="{{ param.name }}" name="{{ param.name }}" min="{{ param.min }}" max="{{ param.max }}" value="{{ data.get(param.name, '') }}" required>
+                {% endif %}
+            {% endfor %}
+            <div class="form-actions">
+                <button type="submit">Get Recommendation</button>
+                <a href="/previous_recommendations" class="button">Previous Recommendations</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

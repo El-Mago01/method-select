@@ -1,0 +1,61 @@
+{
+    "parameters": [
+        {
+            "name": "team_experience",
+            "type": "select",
+            "options": ["low", "medium", "high"]
+        },
+        {
+            "name": "complexity",
+            "type": "select",
+            "options": ["low", "medium", "high"]
+        }
+    ],
+    "rules": [
+        {
+            "team_experience": "low",
+            "complexity": "low",
+            "method": "KanBan"
+        },
+        {
+            "team_experience": "low",
+            "complexity": "medium",
+            "method": "Scrum"
+        },
+        {
+            "team_experience": "low",
+            "complexity": "high",
+            "method": "Scrum"
+        },
+        {
+            "team_experience": "medium",
+            "complexity": "low",
+            "method": "Scrum"
+        },
+        {
+            "team_experience": "medium",
+            "complexity": "medium",
+            "method": "Scrum"
+        },
+        {
+            "team_experience": "medium",
+            "complexity": "high",
+            "method": "Scrum"
+        },
+        {
+            "team_experience": "high",
+            "complexity": "low",
+            "method": "Scrum"
+        },
+        {
+            "team_experience": "high",
+            "complexity": "medium",
+            "method": "Scrum"
+        },
+        {
+            "team_experience": "high",
+            "complexity": "high",
+            "method": "Scrum"
+        }
+    ]
+}

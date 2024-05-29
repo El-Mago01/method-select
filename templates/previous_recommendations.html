@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Previous Recommendations</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Previous Recommendations</h1>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Project Type</th>
+                        <th>Complexity</th>
+                        <th>Team Size</th>
+                        <th>Knowledge of Customer</th>
+                        <th>High-Level Recommendation</th>
+                        <th>Second-Level Recommendation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rec in recommendations %}
+                    <tr>
+                        <td>{{ rec.first_level.project_type }}</td>
+                        <td>{{ rec.first_level.complexity }}</td>
+                        <td>{{ rec.first_level.team_size }}</td>
+                        <td>{{ rec.first_level.knowledge_of_customer }}</td>
+                        <td>{{ rec.first_level.recommendation }}</td>
+                        <td>{{ rec.second_level.method if rec.second_level else 'N/A' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <a href="/" class="button">Back to Home</a>
+    </div>
+</body>
+</html>

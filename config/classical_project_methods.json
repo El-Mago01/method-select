@@ -1,0 +1,31 @@
+{
+    "parameters": [
+        {
+            "name": "customer_engagement",
+            "type": "select",
+            "options": ["low", "medium", "high"]
+        },
+        {
+            "name": "innovation_level",
+            "type": "select",
+            "options": ["low", "medium", "high"]
+        }
+    ],
+    "rules": [
+        {
+            "customer_engagement": "high",
+            "innovation_level": "high",
+            "method": "Customer Needs Discovery"
+        },
+        {
+            "customer_engagement": "medium",
+            "innovation_level": "medium",
+            "method": "Assumption Storming"
+        },
+        {
+            "customer_engagement": "low",
+            "innovation_level": "low",
+            "method": "Value Proposition Canvas"
+        }
+    ]
+}

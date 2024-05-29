@@ -1,0 +1,90 @@
+{
+    "parameters": [
+        {
+            "name": "project_type",
+            "type": "select",
+            "options": ["software", "manufacturing", "HW design"]
+        },
+        {
+            "name": "knowledge_of_technology",
+            "type": "select",
+            "options": ["low", "medium", "high"]
+        },
+        {
+            "name": "knowledge_of_customer",
+            "type": "select",
+            "options": ["low", "medium", "high"]
+        },
+        {
+            "name": "team_size",
+            "type": "number",
+            "min": 1,
+            "max": 100
+        }
+    ],
+    "rules": [
+        {
+            "project_type": null,
+            "knowledge_of_technology": null,
+            "knowledge_of_customer": "low",
+            "team_size": null,
+            "method": "agile methods"
+        },
+        {
+            "project_type": null,
+            "knowledge_of_technology": null,
+            "knowledge_of_customer": "medium",
+            "team_size": null,
+            "method": "agile methods"
+        },
+        {
+            "project_type": "software",
+            "knowledge_of_technology": null,
+            "knowledge_of_customer": "high",
+            "team_size": {"max": 2},
+            "method": "agile methods"
+        },
+        {
+            "project_type": "software",
+            "knowledge_of_technology": null,
+            "knowledge_of_customer": null,
+            "team_size": {"max": 10},
+            "method": "agile methods"
+        },
+        {
+            "project_type": "software",
+            "knowledge_of_technology": null,
+            "knowledge_of_customer": "high",
+            "team_size": {"min": 10},
+            "method": "agile methods"
+        },
+        {
+            "project_type": "manufacturing",
+            "knowledge_of_technology": "high",
+            "team_size": null,
+            "knowledge_of_customer": null,           
+            "method": "agile methods"
+        },
+        {
+            "project_type": "manufacturing",
+            "knowledge_of_technology": null,
+            "team_size": null,
+            "knowledge_of_customer": null,              
+            "method": "Six Sigma methods"
+        },
+        {
+            "project_type": "Design",
+            "knowledge_of_technology": "high",
+            "team_size": null,
+            "knowledge_of_customer": null,  
+            "method": "agile methods"
+        },
+        {
+            "project_type": "Design",
+            "knowledge_of_technology": "low",
+            "team_size": null,
+            "knowledge_of_customer": "high",  
+            "method": "classical project methods"
+        }
+    ]
+}

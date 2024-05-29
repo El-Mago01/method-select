@@ -1,0 +1,31 @@
+{
+    "parameters": [
+        {
+            "name": "problem_type",
+            "type": "select",
+            "options": ["technical", "process", "organizational"]
+        },
+        {
+            "name": "data_availability",
+            "type": "select",
+            "options": ["low", "medium", "high"]
+        }
+    ],
+    "rules": [
+        {
+            "problem_type": "technical",
+            "data_availability": "high",
+            "tool": "Statistical Problem Analysis"
+        },
+        {
+            "problem_type": "process",
+            "data_availability": "medium",
+            "tool": "Problem Definition Charter"
+        },
+        {
+            "problem_type": "organizational",
+            "data_availability": "low",
+            "tool": "Stakeholder Analysis"
+        }
+    ]
+}
