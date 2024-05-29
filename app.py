@@ -11,6 +11,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///project_methods.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+# this is a new message
 # Define the database models
 class FirstLevelResponse(db.Model):
     id = db.Column(db.Integer, primary_key=True)
