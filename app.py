@@ -14,11 +14,15 @@ db = SQLAlchemy(app)
 # Define the database models
 class RecommendationResponse(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    level = db.Column(db.Integer)
-    recommendation = db.Column(db.String(255))
+    level_1_recommendation = db.Column(db.String(255))
+    level_2_recommendation = db.Column(db.String(255))
+    level_3_recommendation = db.Column(db.String(255))
+    level_4_recommendation = db.Column(db.String(255))
+    level_5_recommendation = db.Column(db.String(255))
 
-# Create the database tables within the application context
+# Drop and recreate the tables within the application context
 with app.app_context():
+    db.drop_all()
     db.create_all()
 
 # Maximum level constant
@@ -50,9 +54,17 @@ def recommend():
     session[f'level_{level}_data'] = data
     session[f'level_{level}_recommendation'] = recommendation
 
-    # Save the recommendation to the database
-    recommendation_response = RecommendationResponse(level=level, recommendation=recommendation)
-    db.session.add(recommendation_response)
+    # Retrieve or create a RecommendationResponse object
+    if 'recommendation_id' not in session:
+        recommendation_response = RecommendationResponse()
+        db.session.add(recommendation_response)
+        db.session.commit()
+        session['recommendation_id'] = recommendation_response.id
+    else:
+        recommendation_response = RecommendationResponse.query.get(session['recommendation_id'])
+
+    # Update the corresponding level recommendation
+    setattr(recommendation_response, f'level_{level}_recommendation', recommendation)
     db.session.commit()
 
     if level >= MAX_LEVEL:
@@ -73,7 +85,7 @@ def recommend():
 @app.route('/previous_recommendations')
 def previous_recommendations():
     recommendations = RecommendationResponse.query.all()
-    return render_template('previous_recommendations.html', recommendations=recommendations)
+    return render_template('previous_recommendations.html', recommendations=recommendations, max_level=MAX_LEVEL)
 
 @app.route('/back', methods=['POST'])
 def back():
@@ -130,5 +142,10 @@ def get_recommendation(data, level):
     print("No matching rule found.")
     return None
 
+def get_level_recommendation(rec, level):
+    return getattr(rec, f'level_{level}_recommendation', None)
+
+app.jinja_env.globals.update(get_level_recommendation=get_level_recommendation)
+ 
 if __name__ == '__main__':
     app.run(debug=True)
