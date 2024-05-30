@@ -3,7 +3,7 @@
         {
             "name": "project_type",
             "type": "select",
-            "options": ["software", "manufacturing", "HW design"]
+            "options": ["software", "manufacturing", "HW_design"]
         },
         {
             "name": "knowledge_of_technology",
@@ -59,15 +59,15 @@
             "method": "agile methods"
         },
         {
-            "project_type": "manufacturing",
+            "project_type": ["manufacturing", "HW_Design"],
             "knowledge_of_technology": "high",
             "team_size": null,
-            "knowledge_of_customer": null,           
-            "method": "agile methods"
+            "knowledge_of_customer": "high",           
+            "method": "classical project methods"
         },
         {
             "project_type": "manufacturing",
-            "knowledge_of_technology": null,
+            "knowledge_of_technology": "Medium",
             "team_size": null,
             "knowledge_of_customer": null,              
             "method": "Six Sigma methods"

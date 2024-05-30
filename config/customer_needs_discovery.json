@@ -1,0 +1,26 @@
+{
+    "parameters": [
+        {
+            "name": "customer_interview_performed",
+            "type": "select",
+            "options": ["yes", "no", "sort_of"]
+        },
+        {
+            "name": "Customer_observation_performed",
+            "type": "select",
+            "options": ["yes", "no", "sort_of"]
+        }
+    ],
+    "rules": [
+        {
+            "customer_interview_performed": ["no", "sort_of"],
+            "customer_observation_performed": null,
+            "method": "detailed customer interview"
+        },
+        {
+            "customer_interview_performed": null,
+            "customer_observation_performed": ["no", "sort_of"],
+            "method": "detailed customer observation activity"
+        }
+    ]
+}

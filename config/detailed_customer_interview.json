@@ -1,0 +1,26 @@
+{
+    "parameters": [
+        {
+            "name": "asked_open_questions",
+            "type": "select",
+            "options": ["yes", "no", "sort_of"]
+        },
+        {
+            "name": "started_with_shoshin_mind",
+            "type": "select",
+            "options": ["yes", "no", "sort_of"]
+        }
+    ],
+    "rules": [
+        {
+            "asked_open_questions": ["no", "sort_of"],
+            "started_with_shoshin_mind": null,
+            "method": "do customer collaboration workshop"
+        },
+        {
+            "asked_open_questions": null,
+            "started_with_shoshin_mind": ["no", "sort_of"],
+            "method": "do customer collaboration workshop"
+        }
+    ]
+}

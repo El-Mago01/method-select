@@ -1,0 +1,26 @@
+{
+    "parameters": [
+        {
+            "name": "assumption_storming_mapping",
+            "type": "select",
+            "options": ["yes", "no", "sort_of"]
+        },
+        {
+            "name": "Value_proposition_canvas_done",
+            "type": "select",
+            "options": ["yes", "no", "sort_of"]
+        }
+    ],
+    "rules": [
+        {
+            "assumption_storming_mapping": ["no", "sort_of"],
+            "started_with_shoshin_mind": null,
+            "method": "do_problem_framing"
+        },
+        {
+            "Value_proposition_canvas_done": null,
+            "brainstorm_new_ideas": ["no", "sort_of"],
+            "method": "do_brain_storming"
+        }
+    ]
+}
