@@ -51,32 +51,20 @@ def recommend():
         print("No valid recommendation found for the provided inputs.")
         return render_template('error.html', message="No valid recommendation found for the provided inputs. Please check your inputs and try again.")
 
-    session[f'level_{level}_data'] = data
-    session[f'level_{level}_recommendation'] = recommendation
-
-    # Retrieve or create a RecommendationResponse object
-    if 'recommendation_id' not in session:
-        recommendation_response = RecommendationResponse()
-        db.session.add(recommendation_response)
-        db.session.commit()
-        session['recommendation_id'] = recommendation_response.id
-    else:
-        recommendation_response = RecommendationResponse.query.get(session['recommendation_id'])
-
-    # Update the corresponding level recommendation
-    setattr(recommendation_response, f'level_{level}_recommendation', recommendation)
-    db.session.commit()
-
-    if level >= MAX_LEVEL:
-        print(f"Reached maximum level {MAX_LEVEL}. Showing final recommendation.")
-        return render_template('final_recommendation.html', method=recommendation)
-
     next_level = level + 1
     next_level_config_file = os.path.join('config', f"{recommendation.replace(' ', '_').lower()}.json")
     print(f"Next level config file path: {next_level_config_file}")
 
+    if level >= MAX_LEVEL or not os.path.exists(next_level_config_file):
+        print(f"Reached maximum level {MAX_LEVEL} or no next level config file found. Showing final recommendation.")
+        session[f'level_{level}_data'] = data
+        session[f'level_{level}_recommendation'] = recommendation
+        return render_template('final_recommendation.html', method=recommendation)
+    
     if os.path.exists(next_level_config_file):
         print(f"Found next level config file: {next_level_config_file}")
+        session[f'level_{level}_data'] = data
+        session[f'level_{level}_recommendation'] = recommendation
         return render_template('recommend.html', parameters=get_parameters(f"{recommendation.replace(' ', '_').lower()}.json"), level=next_level, recommendation=recommendation)
     else:
         print(f"No next level config file found. Showing final recommendation.")
@@ -85,19 +73,38 @@ def recommend():
 @app.route('/previous_recommendations')
 def previous_recommendations():
     recommendations = RecommendationResponse.query.all()
+    print(f"These are the stored recommendation {recommendations}")
     return render_template('previous_recommendations.html', recommendations=recommendations, max_level=MAX_LEVEL)
 
 @app.route('/back', methods=['POST'])
 def back():
     level = int(request.form.get('level')) - 1
+    print(f"The back-button is pressed. Going from level {level + 1} to level {level}")
+
     if level == 0:
         return redirect(url_for('index'))
 
-    previous_recommendation = session.get(f'level_{level}_recommendation')
+    previous_recommendation = session.get(f'level_{level-1}_recommendation')
     previous_data = session.get(f'level_{level}_data')
-    previous_level_config_file = os.path.join('config', f"{previous_recommendation.replace(' ', '_').lower()}.json") if level > 1 else 'high_level_methods.json'
+    print(f"The content of all the session data is: {dict(session)}")
+    print(f"The previous recommendation is: {previous_recommendation}")
+    print(f"The previous input data is: {previous_data}")
 
-    return render_template('recommend.html', parameters=get_parameters(previous_level_config_file), level=level, recommendation=previous_recommendation, data=previous_data)
+    if level == 1:
+        previous_level_config_file = 'high_level_methods.json'
+    else:
+        previous_level_config_file = f"config/{previous_recommendation.replace(' ', '_').lower()}.json"
+    
+    print(f"Loading previous level config file: {previous_level_config_file}")
+
+    if os.path.exists(previous_level_config_file):
+        print(f"Found previous level config file: {previous_level_config_file}")
+        return render_template('recommend.html', parameters=get_parameters(f"{previous_recommendation.replace(' ', '_').lower()}.json"), level=level, recommendation=previous_recommendation, data=previous_data, pre_filled=previous_data)
+        #return render_template('recommend.html', parameters=get_parameters(previous_level_config_file),                                 level=level, recommendation=previous_recommendation, data=previous_data, pre_filled={'question_1': 'no', 'question_2': 'yes'})
+    else:
+        print(f"No previous level config file found. Showing first recommendation.")
+        session.clear()  # Clear the session to start fresh
+        return render_template('index.html', parameters=get_parameters('high_level_methods.json'), level=1, data=previous_data, pre_filled=previous_data)
 
 def get_parameters(config_file):
     config_path = os.path.join('config', config_file)
@@ -132,20 +139,46 @@ def get_recommendation(data, level):
         print(f"Error opening file {config_path}: {e}")
         return None
 
+    def match_rule_value(rule_value, data_value):
+        if data_value is None:
+            return rule_value is None
+        if isinstance(rule_value, list):
+            return data_value.lower() in (val.lower() for val in rule_value)
+        elif isinstance(rule_value, str):
+            return rule_value.lower() == data_value.lower()
+        elif isinstance(rule_value, dict):
+            return check_range(rule_value, data_value)
+        return False
+
     for rule in config['rules']:
         print(f"Checking rule: {rule}")
-        if all((rule.get(key) is None or
-                (isinstance(rule.get(key), list) and data.get(key) is not None and data.get(key).lower() in [val.lower() for val in rule.get(key)]) or
-                (isinstance(rule.get(key), str) and data.get(key) is not None and rule.get(key).lower() == data.get(key).lower())) for key in rule if key != 'method'):
+        all_match = True
+        for key in rule:
+            if key == 'method':
+                continue
+            rule_value = rule.get(key)
+            data_value = data.get(key)
+            match = rule_value is None or match_rule_value(rule_value, data_value)
+            print(f"  - Key: {key}, Rule Value: {rule_value}, Data Value: {data_value}, Match: {match}")
+            if not match:
+                all_match = False
+                break
+        if all_match:
             print(f"Matched rule: {rule}")
             return rule['method']
     print("No matching rule found.")
     return None
 
+def check_range(range_dict, value):
+    value = int(value)
+    min_val = range_dict.get('min', float('-inf'))
+    max_val = range_dict.get('max', float('inf'))
+    return min_val <= value <= max_val
+
 def get_level_recommendation(rec, level):
     return getattr(rec, f'level_{level}_recommendation', None)
 
 app.jinja_env.globals.update(get_level_recommendation=get_level_recommendation)
- 
+
 if __name__ == '__main__':
     app.run(debug=True)
