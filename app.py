@@ -6,7 +6,7 @@ import os
 # Import blueprints
 from update_rules import update_rules_bp
 from visualize_rules import visualize_rules_bp
-from list_all_recommendations import list_all_recommendations_bp
+from list_all_recommendations import get_unique_recommendations
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'  # Replace with your secret key
@@ -48,11 +48,6 @@ def index():
 def menu():
     return render_template('menu.html')
 
-@app.route('/list_all_recommendations')
-def list_all_recommendations():
-    # Placeholder function for listing all available recommendations
-    return render_template('list_all_recommendations.html')
-
 @app.route('/visualize_rules')
 def visualize_rules():
     # Placeholder function for visualizing the rules algorithm
@@ -63,6 +58,11 @@ def update_rules():
     # Placeholder function for updating the rules algorithm
     return render_template('update_rules.html')
 
+@app.route('/list_all_recommendations')
+def list_all_recommendations():
+    recommendations = get_unique_recommendations()
+    return render_template('list_all_recommendations.html', recommendations=recommendations)
+
 @app.route('/recommend', methods=['POST'])
 def recommend():
     data = request.form.to_dict()
@@ -72,7 +72,7 @@ def recommend():
     if level == 1:
         session['project_name'] = data.pop('project_name')
         session['project_leader'] = data.pop('project_leader')
-        
+
     # Log the current level and data
     print(f"Current level: {level}")
     print(f"Received data: {data}")
@@ -251,7 +251,7 @@ app.jinja_env.globals.update(get_level_recommendation=get_level_recommendation)
 # Register blueprints
 app.register_blueprint(update_rules_bp)
 app.register_blueprint(visualize_rules_bp)
-app.register_blueprint(list_all_recommendations_bp)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
