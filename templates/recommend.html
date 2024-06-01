@@ -9,29 +9,42 @@
 <body>
     <div class="container">
         <h1>Next Level Questions</h1>
-        <p>Based on your previous inputs, the recommended method is: <strong>{{ recommendation }}</strong></p>
-        <form action="/recommend" method="post">
-            {% for param in parameters %}
-                <label for="{{ param.id }}">{{ param.question }}:</label>
-                {% if param.type == 'select' %}
-                    <select id="{{ param.id }}" name="{{ param.id }}" required>
-                        {% for option in param.options %}
-                            <option value="{{ option }}" {% if data and data.get(param.id) == option %}selected{% endif %}>{{ option }}</option>
-                        {% endfor %}
-                    </select>
-                {% elif param.type == 'number' %}
-                    <input type="number" id="{{ param.id }}" name="{{ param.id }}" min="{{ param.min }}" max="{{ param.max }}" value="{{ data.get(param.id, '') if data else '' }}" required>
+        <p>Based on your previous inputs, the recommended method(s) thus far is/are: <strong>{{ recommendation }}</strong></p>
+        <p>Details: {{ details }}</p><p> </p>
+        <p>For more assistance, please contact: {{ contact }}</p><p> </p>
+        <form method="post" action="{{ url_for('recommend') }}" onsubmit="return checkFormData()">
+            <input type="hidden" name="level" value="{{ level }}">
+            {% for parameter in parameters %}
+            <div class="form-group">
+                <label for="{{ parameter.id }}">{{ parameter.question }}</label>
+                {% if parameter.type == 'select' %}
+                <select name="{{ parameter.id }}" id="{{ parameter.id }}">
+                    {% for option in parameter.options %}
+                    <option value="{{ option }}" {% if data and data.get(parameter.id) == option %}selected{% endif %}>{{ option }}</option>
+                    {% endfor %}
+                </select>
+                {% elif parameter.type == 'number' %}
+                <input type="number" name="{{ parameter.id }}" id="{{ parameter.id }}" min="{{ parameter.min }}" max="{{ parameter.max }}" value="{{ data.get(parameter.id) if data else '' }}">
                 {% endif %}
-            {% endfor %}
-            <input type="hidden" name="level" value="{{ level }}">
-            <div class="form-actions">
-                <button type="submit">Get Next Recommendation</button>
-                <button type="button" onclick="document.getElementById('back-form').submit();">Back</button>
             </div>
-        </form>
-        <form id="back-form" action="/back" method="post">
-            <input type="hidden" name="level" value="{{ level }}">
-        </form>
+            {% endfor %}
+            <button type="submit">Get Next Recommendation</button>
+            
+            <form action="{{ url_for('back') }}" method="post" style="display: inline;">
+                <input type="hidden" name="level" value="{{ level }}">
+                <button type="submit">Back</button>
+            </form>
+      </form>   
+        <script>
+            function checkFormData() {
+                var formData = new FormData(document.forms[0]);
+                for (var pair of formData.entries()) {
+                    console.log(pair[0] + ': ' + pair[1]);
+                }
+                return true;
+            }
+        </script>
+    
     </div>
 </body>
 </html>

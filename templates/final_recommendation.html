@@ -9,8 +9,10 @@
 <body>
     <div class="container">
         <h1>Final Recommendation</h1>
-        <p>Based on your inputs, the recommended method is: <strong>{{ method }}</strong></p>
-        <a href="/" class="button">Start Over</a>
+        <p>The final recommended method is: <strong>{{ method }}</strong></p>
+        <p>Details: {{ details }}</p>
+        <p>For more assistance, please contact: {{ contact }}</p>
+        <a href="{{ url_for('index') }}" class="button">Start Over</a>
     </div>
 </body>
 </html>

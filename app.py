@@ -19,6 +19,7 @@ class RecommendationResponse(db.Model):
     level_3_recommendation = db.Column(db.String(255))
     level_4_recommendation = db.Column(db.String(255))
     level_5_recommendation = db.Column(db.String(255))
+  #  current_session = session
 
 # Drop and recreate the tables within the application context
 with app.app_context():
@@ -45,16 +46,18 @@ def recommend():
     print(f"Current level: {level}")
     print(f"Received data: {data}")
 
-    recommendation = get_recommendation(data, level)
+    recommendation, details, contact = get_recommendation(data, level)
 
     if not recommendation:
         print("No valid recommendation found for the provided inputs.")
-        #return render_template('error.html', message="No valid recommendation found for the provided inputs. Please check your inputs and try again.")
         return render_template('error.html', message="No valid recommendation found for the provided inputs. Please check your inputs and try again.", level=level)
 
     next_level = level + 1
     next_level_config_file = os.path.join('config', f"{recommendation.replace(' ', '_').lower()}.json")
     print(f"Next level config file path: {next_level_config_file}")
+
+    session[f'level_{level}_data'] = data
+    session[f'level_{level}_recommendation'] = recommendation
 
     # Retrieve or create a RecommendationResponse object
     if 'recommendation_id' not in session:
@@ -63,7 +66,9 @@ def recommend():
         db.session.commit()
         session['recommendation_id'] = recommendation_response.id
     else:
+        print(f"Storing the recommendation in the database. {session['recommendation_id']}")
         recommendation_response = RecommendationResponse.query.get(session['recommendation_id'])
+        print(f"Storing the recommendation in the database. {recommendation_response}")
 
     # Update the corresponding level recommendation
     setattr(recommendation_response, f'level_{level}_recommendation', recommendation)
@@ -73,16 +78,17 @@ def recommend():
         print(f"Reached maximum level {MAX_LEVEL} or no next level config file found. Showing final recommendation.")
         session[f'level_{level}_data'] = data
         session[f'level_{level}_recommendation'] = recommendation
-        return render_template('final_recommendation.html', method=recommendation)
+        print(f"The following details will be provided {details}")
+        return render_template('final_recommendation.html', method=recommendation,details=details,contact=contact)
     
     if os.path.exists(next_level_config_file):
         print(f"Found next level config file: {next_level_config_file}")
         session[f'level_{level}_data'] = data
         session[f'level_{level}_recommendation'] = recommendation
-        return render_template('recommend.html', parameters=get_parameters(f"{recommendation.replace(' ', '_').lower()}.json"), level=next_level, recommendation=recommendation)
+        return render_template('recommend.html', parameters=get_parameters(f"{recommendation.replace(' ', '_').lower()}.json"), level=next_level, recommendation=recommendation, details=details, contact=contact)
     else:
         print(f"No next level config file found. Showing final recommendation.")
-        return render_template('final_recommendation.html', method=recommendation)
+        return render_template('final_recommendation.html', method=recommendation,details=details)
 
 @app.route('/previous_recommendations')
 def previous_recommendations():
@@ -141,7 +147,7 @@ def get_recommendation(data, level):
             config_file = f"{recommendation.replace(' ', '_').lower()}.json"
         else:
             print(f"No recommendation found for level {level - 1}")
-            return None
+            return None, 'no detailed information provided', 'no contact information provided'
 
     config_path = os.path.join('config', config_file)
     print(f"Constructed config path: {config_path}")
@@ -152,7 +158,7 @@ def get_recommendation(data, level):
             config = json.load(file)
     except OSError as e:
         print(f"Error opening file {config_path}: {e}")
-        return None
+        return None, 'no detailed information provided', 'no contact information provided'
 
     def match_rule_value(rule_value, data_value):
         if data_value is None:
@@ -180,9 +186,22 @@ def get_recommendation(data, level):
                 break
         if all_match:
             print(f"Matched rule: {rule}")
-            return rule['method']
+            method = rule['method']
+            detail_file = f"rd_{method.replace(' ', '_').lower()}.json"
+            detail_path = os.path.join('recommendation_details', detail_file)
+            try:
+                 with open(detail_path) as file:
+                    details_json = file.read()
+                    print(f"Details JSON content: {details_json}")  # Debugging line
+                    details_json = json.loads(details_json)
+                    details = details_json.get('details', 'no detailed information provided')
+                    contact = details_json.get('contact', 'no contact information provided')
+            except OSError:
+                details = 'no detailed information provided'
+                contact = 'no contacts supplied'
+            return method, details, contact   
     print("No matching rule found.")
-    return None
+    return None, 'no detailed information provided', 'no contact information provided'
 
 def check_range(range_dict, value):
     value = int(value)
