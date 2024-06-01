@@ -1,3 +1,4 @@
 .vs
 .vscode
+instance/project_methods.db
 __pycache__
