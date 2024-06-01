@@ -58,10 +58,13 @@ def update_rules():
     # Placeholder function for updating the rules algorithm
     return render_template('update_rules.html')
 
+from list_all_recommendations import get_all_recommendations_with_details  # Update import
+
 @app.route('/list_all_recommendations')
 def list_all_recommendations():
-    recommendations = get_unique_recommendations()
-    return render_template('list_all_recommendations.html', recommendations=recommendations)
+    recommendations_with_details = get_all_recommendations_with_details()
+    return render_template('list_all_recommendations.html', recommendations=recommendations_with_details)
+
 
 @app.route('/recommend', methods=['POST'])
 def recommend():

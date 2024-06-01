@@ -9,12 +9,16 @@
         <thead>
             <tr>
                 <th>Recommendation</th>
+                <th>Details</th>
+                <th>Contact</th>
             </tr>
         </thead>
         <tbody>
             {% for rec in recommendations %}
             <tr>
-                <td>{{ rec }}</td>
+                <td>{{ rec.recommendation }}</td>
+                <td>{{ rec.details }}</td>
+                <td>{{ rec.contact }}</td>
             </tr>
             {% endfor %}
         </tbody>
