@@ -137,3 +137,14 @@ table {
     box-shadow: 0 5px #666;
     transform: translateY(4px);
 }
+
+/* Add this new CSS rule */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.inline-form {
+    display: inline;
+}

@@ -1,12 +1,14 @@
 {
     "parameters": [
         {
-            "name": "asked_open_questions",
+            "id": "asked_open_questions",
+            "question": "Have you asked open questions to the customer?",
             "type": "select",
             "options": ["yes", "no", "sort_of"]
         },
         {
-            "name": "started_with_shoshin_mind",
+            "id": "started_with_shoshin_mind",
+            "question": "Have you really understand the customer needs, based on shoshin mind?",
             "type": "select",
             "options": ["yes", "no", "sort_of"]
         }

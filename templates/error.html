@@ -11,7 +11,12 @@
         <h1>Error</h1>
         <p>{{ message }}</p>
         <p>Please ensure that your inputs match the expected format and values.</p>
-        <a href="/" class="button">Back to Home</a>
-    </div>
+        <div class="button-container">
+            <a href="/" class="button">Back to Home</a>
+            <form action="{{ url_for('back') }}" method="post" class="inline-form">
+                <input type="hidden" name="level" value="{{ level }}">
+                <button type="submit" class="button">Back</button>
+            </form>
+        </div>
 </body>
 </html>

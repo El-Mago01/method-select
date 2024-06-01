@@ -49,7 +49,8 @@ def recommend():
 
     if not recommendation:
         print("No valid recommendation found for the provided inputs.")
-        return render_template('error.html', message="No valid recommendation found for the provided inputs. Please check your inputs and try again.")
+        #return render_template('error.html', message="No valid recommendation found for the provided inputs. Please check your inputs and try again.")
+        return render_template('error.html', message="No valid recommendation found for the provided inputs. Please check your inputs and try again.", level=level)
 
     next_level = level + 1
     next_level_config_file = os.path.join('config', f"{recommendation.replace(' ', '_').lower()}.json")

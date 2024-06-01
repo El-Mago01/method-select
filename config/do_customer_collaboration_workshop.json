@@ -1,12 +1,14 @@
 {
     "parameters": [
         {
-            "name": "problem_framed",
+            "id": "problem_framed",
+            "question": "Has the problem been framed?",
             "type": "select",
             "options": ["yes", "no", "sort_of"]
         },
         {
-            "name": "brainstorm_new_ideas",
+            "id": "brainstorm_new_ideas",
+            "question": "Did you get possible solutions based on collective intelligence, e.g. using advanced brainstorming techniques?",
             "type": "select",
             "options": ["yes", "no", "sort_of"]
         }

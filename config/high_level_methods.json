@@ -1,22 +1,26 @@
 {
     "parameters": [
         {
-            "name": "project_type",
+            "id": "project_type",
+            "question": "What type of project is it?",
             "type": "select",
             "options": ["software", "manufacturing", "HW_design"]
         },
         {
-            "name": "knowledge_of_technology",
+            "id": "knowledge_of_technology",
+            "question": "How well is the technology known?",
             "type": "select",
             "options": ["low", "medium", "high"]
         },
         {
-            "name": "knowledge_of_customer",
+            "id": "knowledge_of_customer",
+            "question": "How well do we know the needs of the customer",
             "type": "select",
             "options": ["low", "medium", "high"]
         },
         {
-            "name": "team_size",
+            "id": "team_size",
+            "question": "How many team members are involved in the project (including PL)?",
             "type": "number",
             "min": 1,
             "max": 100

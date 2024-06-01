@@ -1,12 +1,14 @@
 {
     "parameters": [
         {
-            "name": "problem_type",
+            "id": "problem_type",
+            "question": "What type of problem is it?",
             "type": "select",
             "options": ["technical", "process", "organizational"]
         },
         {
-            "name": "data_availability",
+            "id": "data_availability",
+            "question": "How much data is available?",
             "type": "select",
             "options": ["low", "medium", "high"]
         }

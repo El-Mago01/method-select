@@ -1,12 +1,14 @@
 {
     "parameters": [
         {
-            "name": "customer_interview_performed",
+            "id": "customer_interview_performed",
+            "question": "Have thorough customer interviews been performed?",
             "type": "select",
             "options": ["yes", "no", "sort_of"]
         },
         {
-            "name": "Customer_observation_performed",
+            "naidme": "Customer_observation_performed",
+            "question": "Has the customer been observed closely on activities where our solution might fit in",
             "type": "select",
             "options": ["yes", "no", "sort_of"]
         }

@@ -1,12 +1,14 @@
 {
     "parameters": [
         {
-            "name": "assumption_storming_mapping",
+            "id": "assumption_storming_mapping",
+            "question": "Are you frequently identifying assumption related to viability/desireability/feasibility?",
             "type": "select",
             "options": ["yes", "no", "sort_of"]
         },
         {
-            "name": "Value_proposition_canvas_done",
+            "id": "Value_proposition_canvas_done",
+            "question": "Are you maintaining a Value proposition canvas for your project?",
             "type": "select",
             "options": ["yes", "no", "sort_of"]
         }
