@@ -11,15 +11,15 @@
         <h1>Project Method Selection Tool</h1>
         <form action="/recommend" method="post">
             {% for param in parameters %}
-                <label for="{{ param.name }}">{{ param.name.replace('_', ' ').capitalize() }}:</label>
+                <label for="{{ param.id }}">{{ param.question }}:</label>
                 {% if param.type == 'select' %}
-                    <select id="{{ param.name }}" name="{{ param.name }}" required>
+                    <select id="{{ param.id }}" name="{{ param.id }}" required>
                         {% for option in param.options %}
-                            <option value="{{ option }}" {% if data and data.get(param.name) == option %}selected{% endif %}>{{ option }}</option>
+                            <option value="{{ option }}" {% if data and data.get(param.id) == option %}selected{% endif %}>{{ option }}</option>
                         {% endfor %}
                     </select>
                 {% elif param.type == 'number' %}
-                    <input type="number" id="{{ param.name }}" name="{{ param.name }}" min="{{ param.min }}" max="{{ param.max }}" value="{{ data[param.name] if data and data.get(param.name) else '' }}" required>
+                    <input type="number" id="{{ param.id }}" name="{{ param.id }}" min="{{ param.min }}" max="{{ param.max }}" value="{{ data[param.id] if data and data.get(param.id) else '' }}" required>
                 {% endif %}
             {% endfor %}
             <input type="hidden" name="level" value="{{ level }}">

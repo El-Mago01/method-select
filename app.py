@@ -56,6 +56,19 @@ def recommend():
     next_level_config_file = os.path.join('config', f"{recommendation.replace(' ', '_').lower()}.json")
     print(f"Next level config file path: {next_level_config_file}")
 
+    # Retrieve or create a RecommendationResponse object
+    if 'recommendation_id' not in session:
+        recommendation_response = RecommendationResponse()
+        db.session.add(recommendation_response)
+        db.session.commit()
+        session['recommendation_id'] = recommendation_response.id
+    else:
+        recommendation_response = RecommendationResponse.query.get(session['recommendation_id'])
+
+    # Update the corresponding level recommendation
+    setattr(recommendation_response, f'level_{level}_recommendation', recommendation)
+    db.session.commit()
+
     if level >= MAX_LEVEL or not os.path.exists(next_level_config_file):
         print(f"Reached maximum level {MAX_LEVEL} or no next level config file found. Showing final recommendation.")
         session[f'level_{level}_data'] = data
@@ -73,8 +86,9 @@ def recommend():
 
 @app.route('/previous_recommendations')
 def previous_recommendations():
+    print("Showing the content of the database:")
     recommendations = RecommendationResponse.query.all()
-    print(f"These are the stored recommendation {recommendations}")
+    print(f"These are the stored recommendations {recommendations}")
     return render_template('previous_recommendations.html', recommendations=recommendations, max_level=MAX_LEVEL)
 
 @app.route('/back', methods=['POST'])

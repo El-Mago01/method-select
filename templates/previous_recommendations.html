@@ -5,29 +5,31 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Previous Recommendations</h1>
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    {% for level in range(1, max_level + 1) %}
-                    <th>Level {{ level }} Recommendation</th>
+    <div class="container">
+        <h1>Previous Recommendations</h1>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        {% for level in range(1, max_level + 1) %}
+                        <th>Level {{ level }} Recommendation</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rec in recommendations %}
+                    <tr>
+                        {% for level in range(1, max_level + 1) %}
+                        <td>{{ get_level_recommendation(rec, level) }}</td>
+                        {% endfor %}
+                    </tr>
                     {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for rec in recommendations %}
-                <tr>
-                    {% for level in range(1, max_level + 1) %}
-                    <td>{{ get_level_recommendation(rec, level) }}</td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class="button-container">
-        <a href="{{ url_for('index') }}" class="button">Return to Home</a>
+                </tbody>
+            </table>
+        </div>
+        <div class="button-container">
+            <a href="{{ url_for('index') }}" class="button">Return to Home</a>
+        </div>
     </div>
 </body>
 </html>
