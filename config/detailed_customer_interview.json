@@ -1,0 +1,28 @@
+{
+    "parameters": [
+        {
+            "id": "asked_open_questions",
+            "question": "Have you asked open questions to the customer?",
+            "type": "select",
+            "options": ["yes", "no", "sort_of"]
+        },
+        {
+            "id": "started_with_shoshin_mind",
+            "question": "Have you really understand the customer needs, based on shoshin mind?",
+            "type": "select",
+            "options": ["yes", "no", "sort_of"]
+        }
+    ],
+    "rules": [
+        {
+            "asked_open_questions": ["no", "sort_of"],
+            "started_with_shoshin_mind": null,
+            "method": "do customer collaboration workshop"
+        },
+        {
+            "asked_open_questions": null,
+            "started_with_shoshin_mind": ["no", "sort_of"],
+            "method": "do customer collaboration workshop"
+        }
+    ]
+}

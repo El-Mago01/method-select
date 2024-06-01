@@ -10,11 +10,13 @@
     <div class="container">
         <h1>Error</h1>
         <p>{{ message }}</p>
-        <div class="form-actions">
-            <form action="/" method="get">
-                <button type="submit">Back</button>
+        <p>Please ensure that your inputs match the expected format and values.</p>
+        <div class="button-container">
+            <a href="/" class="button">Back to Home</a>
+            <form action="{{ url_for('back') }}" method="post" class="inline-form">
+                <input type="hidden" name="level" value="{{ level }}">
+                <button type="submit" class="button">Back</button>
             </form>
         </div>
-    </div>
 </body>
 </html>

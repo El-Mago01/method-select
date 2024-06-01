@@ -1,12 +1,14 @@
 {
     "parameters": [
         {
-            "name": "customer_engagement",
+            "id": "customer_engagement",
+            "question": "Are we closely working/partnering with the customer",
             "type": "select",
             "options": ["low", "medium", "high"]
         },
         {
-            "name": "innovation_level",
+            "id": "innovation_level",
+            "question": "What is the level of innovation?",
             "type": "select",
             "options": ["low", "medium", "high"]
         }

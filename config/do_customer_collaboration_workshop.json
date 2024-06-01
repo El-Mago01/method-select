@@ -1,0 +1,28 @@
+{
+    "parameters": [
+        {
+            "id": "problem_framed",
+            "question": "Has the problem been framed?",
+            "type": "select",
+            "options": ["yes", "no", "sort_of"]
+        },
+        {
+            "id": "brainstorm_new_ideas",
+            "question": "Did you get possible solutions based on collective intelligence, e.g. using advanced brainstorming techniques?",
+            "type": "select",
+            "options": ["yes", "no", "sort_of"]
+        }
+    ],
+    "rules": [
+        {
+            "problem_framed": ["no", "sort_of"],
+            "started_with_shoshin_mind": null,
+            "method": "do_problem_framing"
+        },
+        {
+            "problem_framed": null,
+            "brainstorm_new_ideas": ["no", "sort_of"],
+            "method": "do_brain_storming"
+        }
+    ]
+}

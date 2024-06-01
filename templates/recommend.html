@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next Level Questions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Next Level Questions</h1>
+        <p>Based on your previous inputs, the recommended method is: <strong>{{ recommendation }}</strong></p>
+        <form action="/recommend" method="post">
+            {% for param in parameters %}
+                <label for="{{ param.id }}">{{ param.question }}:</label>
+                {% if param.type == 'select' %}
+                    <select id="{{ param.id }}" name="{{ param.id }}" required>
+                        {% for option in param.options %}
+                            <option value="{{ option }}" {% if data and data.get(param.id) == option %}selected{% endif %}>{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                {% elif param.type == 'number' %}
+                    <input type="number" id="{{ param.id }}" name="{{ param.id }}" min="{{ param.min }}" max="{{ param.max }}" value="{{ data.get(param.id, '') if data else '' }}" required>
+                {% endif %}
+            {% endfor %}
+            <input type="hidden" name="level" value="{{ level }}">
+            <div class="form-actions">
+                <button type="submit">Get Next Recommendation</button>
+                <button type="button" onclick="document.getElementById('back-form').submit();">Back</button>
+            </div>
+        </form>
+        <form id="back-form" action="/back" method="post">
+            <input type="hidden" name="level" value="{{ level }}">
+        </form>
+    </div>
+</body>
+</html>

@@ -1,12 +1,14 @@
 {
     "parameters": [
         {
-            "name": "team_experience",
+            "id": "team_experience",
+            "question": "How much experience the team has?",
             "type": "select",
             "options": ["low", "medium", "high"]
         },
         {
-            "name": "complexity",
+            "id": "complexity",
+            "question": "How complex is the project?",
             "type": "select",
             "options": ["low", "medium", "high"]
         }

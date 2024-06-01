@@ -1,22 +1,26 @@
 {
     "parameters": [
         {
-            "name": "project_type",
+            "id": "project_type",
+            "question": "What type of project is it?",
             "type": "select",
-            "options": ["software", "manufacturing", "HW design"]
+            "options": ["software", "manufacturing", "HW_design"]
         },
         {
-            "name": "knowledge_of_technology",
-            "type": "select",
-            "options": ["low", "medium", "high"]
-        },
-        {
-            "name": "knowledge_of_customer",
+            "id": "knowledge_of_technology",
+            "question": "How well is the technology known?",
             "type": "select",
             "options": ["low", "medium", "high"]
         },
         {
-            "name": "team_size",
+            "id": "knowledge_of_customer",
+            "question": "How well do we know the needs of the customer",
+            "type": "select",
+            "options": ["low", "medium", "high"]
+        },
+        {
+            "id": "team_size",
+            "question": "How many team members are involved in the project (including PL)?",
             "type": "number",
             "min": 1,
             "max": 100
@@ -59,15 +63,15 @@
             "method": "agile methods"
         },
         {
-            "project_type": "manufacturing",
+            "project_type": ["manufacturing", "HW_Design"],
             "knowledge_of_technology": "high",
             "team_size": null,
-            "knowledge_of_customer": null,           
-            "method": "agile methods"
+            "knowledge_of_customer": "high",           
+            "method": "classical project methods"
         },
         {
             "project_type": "manufacturing",
-            "knowledge_of_technology": null,
+            "knowledge_of_technology": "Medium",
             "team_size": null,
             "knowledge_of_customer": null,              
             "method": "Six Sigma methods"

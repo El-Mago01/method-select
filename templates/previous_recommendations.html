@@ -1,10 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Previous Recommendations</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
@@ -13,29 +11,25 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Project Type</th>
-                        <th>Complexity</th>
-                        <th>Team Size</th>
-                        <th>Knowledge of Customer</th>
-                        <th>High-Level Recommendation</th>
-                        <th>Second-Level Recommendation</th>
+                        {% for level in range(1, max_level + 1) %}
+                        <th>Level {{ level }} Recommendation</th>
+                        {% endfor %}
                     </tr>
                 </thead>
                 <tbody>
                     {% for rec in recommendations %}
                     <tr>
-                        <td>{{ rec.first_level.project_type }}</td>
-                        <td>{{ rec.first_level.complexity }}</td>
-                        <td>{{ rec.first_level.team_size }}</td>
-                        <td>{{ rec.first_level.knowledge_of_customer }}</td>
-                        <td>{{ rec.first_level.recommendation }}</td>
-                        <td>{{ rec.second_level.method if rec.second_level else 'N/A' }}</td>
+                        {% for level in range(1, max_level + 1) %}
+                        <td>{{ get_level_recommendation(rec, level) }}</td>
+                        {% endfor %}
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-        <a href="/" class="button">Back to Home</a>
+        <div class="button-container">
+            <a href="{{ url_for('index') }}" class="button">Return to Home</a>
+        </div>
     </div>
 </body>
 </html>

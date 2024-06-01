@@ -1,0 +1,28 @@
+{
+    "parameters": [
+        {
+            "id": "assumption_storming_mapping",
+            "question": "Are you frequently identifying assumption related to viability/desireability/feasibility?",
+            "type": "select",
+            "options": ["yes", "no", "sort_of"]
+        },
+        {
+            "id": "Value_proposition_canvas_done",
+            "question": "Are you maintaining a Value proposition canvas for your project?",
+            "type": "select",
+            "options": ["yes", "no", "sort_of"]
+        }
+    ],
+    "rules": [
+        {
+            "assumption_storming_mapping": ["no", "sort_of"],
+            "started_with_shoshin_mind": null,
+            "method": "do_problem_framing"
+        },
+        {
+            "Value_proposition_canvas_done": null,
+            "brainstorm_new_ideas": ["no", "sort_of"],
+            "method": "do_brain_storming"
+        }
+    ]
+}
