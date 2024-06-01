@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Main Menu{% endblock %}
+
+{% block content %}
+<h1>Main Menu</h1>
+<ul>
+    <li><a href="{{ url_for('previous_recommendations') }}">List Previous Recommendations</a></li>
+    <li><a href="{{ url_for('index') }}">Get New Recommendation</a></li>
+    <li><a href="#">List All Available Recommendations</a></li>
+    <li><a href="{{ url_for('visualize_rules') }}">Visualization of the Rules Algorithm</a></li>
+    <li><a href="{{ url_for('update_rules') }}">Update the Rules Algorithm</a></li>
+</ul>
+{% endblock %}

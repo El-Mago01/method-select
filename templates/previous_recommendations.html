@@ -1,16 +1,15 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Previous Recommendations</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <div class="container">
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
         <h1>Previous Recommendations</h1>
         <div class="table-container">
             <table>
                 <thead>
                     <tr>
+                        <th>Project Name</th>
+                        <th>Project Leader</th>
                         {% for level in range(1, max_level + 1) %}
                         <th>Level {{ level }} Recommendation</th>
                         {% endfor %}
@@ -19,6 +18,8 @@
                 <tbody>
                     {% for rec in recommendations %}
                     <tr>
+                        <td>{{ rec.project_name }}</td>
+                        <td>{{ rec.project_leader }}</td>
                         {% for level in range(1, max_level + 1) %}
                         <td>{{ get_level_recommendation(rec, level) }}</td>
                         {% endfor %}
@@ -30,6 +31,4 @@
         <div class="button-container">
             <a href="{{ url_for('index') }}" class="button">Return to Home</a>
         </div>
-    </div>
-</body>
-</html>
+{% endblock %}

@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Next Level Questions</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <div class="container">
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
         <h1>Next Level Questions</h1>
         <p>Based on your previous inputs, the recommended method(s) thus far is/are: <strong>{{ recommendation }}</strong></p>
         <p>Details: {{ details }}</p><p> </p>
@@ -45,6 +40,4 @@
             }
         </script>
     
-    </div>
-</body>
-</html>
+{% endblock %}

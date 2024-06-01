@@ -1,15 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Method Selection Tool</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <div class="container">
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
         <h1>Project Method Selection Tool</h1>
         <form action="/recommend" method="post">
+            <label for="project_name">Project Name:</label>
+            <input type="text" id="project_name" name="project_name" required>
+        
+            <label for="project_leader">Project Leader:</label>
+            <input type="text" id="project_leader" name="project_leader" required>
+        
             {% for param in parameters %}
                 <label for="{{ param.id }}">{{ param.question }}:</label>
                 {% if param.type == 'select' %}
@@ -24,8 +25,5 @@
             {% endfor %}
             <input type="hidden" name="level" value="{{ level }}">
             <button type="submit">Get Recommendation</button>
-            <a href="/previous_recommendations" class="button">Previous Recommendations</a>
         </form>
-    </div>
-</body>
-</html>
+{% endblock %}

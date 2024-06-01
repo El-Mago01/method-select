@@ -3,6 +3,11 @@ from flask_sqlalchemy import SQLAlchemy
 import json
 import os
 
+# Import blueprints
+from update_rules import update_rules_bp
+from visualize_rules import visualize_rules_bp
+from list_all_recommendations import list_all_recommendations_bp
+
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'  # Replace with your secret key
 
@@ -14,6 +19,8 @@ db = SQLAlchemy(app)
 # Define the database models
 class RecommendationResponse(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    project_name = db.Column(db.String(255))
+    project_leader = db.Column(db.String(255))
     level_1_recommendation = db.Column(db.String(255))
     level_2_recommendation = db.Column(db.String(255))
     level_3_recommendation = db.Column(db.String(255))
@@ -37,11 +44,35 @@ def index():
     session.clear()  # Clear the session to start fresh
     return render_template('index.html', parameters=get_parameters('high_level_methods.json'), level=1)
 
+@app.route('/menu')
+def menu():
+    return render_template('menu.html')
+
+@app.route('/list_all_recommendations')
+def list_all_recommendations():
+    # Placeholder function for listing all available recommendations
+    return render_template('list_all_recommendations.html')
+
+@app.route('/visualize_rules')
+def visualize_rules():
+    # Placeholder function for visualizing the rules algorithm
+    return render_template('visualize_rules.html')
+
+@app.route('/update_rules')
+def update_rules():
+    # Placeholder function for updating the rules algorithm
+    return render_template('update_rules.html')
+
 @app.route('/recommend', methods=['POST'])
 def recommend():
     data = request.form.to_dict()
     level = int(data.pop('level'))
 
+    # Store project name and leader in the session
+    if level == 1:
+        session['project_name'] = data.pop('project_name')
+        session['project_leader'] = data.pop('project_leader')
+        
     # Log the current level and data
     print(f"Current level: {level}")
     print(f"Received data: {data}")
@@ -61,7 +92,10 @@ def recommend():
 
     # Retrieve or create a RecommendationResponse object
     if 'recommendation_id' not in session:
-        recommendation_response = RecommendationResponse()
+        recommendation_response = RecommendationResponse(
+            project_name=session['project_name'],
+            project_leader=session['project_leader']
+        )
         db.session.add(recommendation_response)
         db.session.commit()
         session['recommendation_id'] = recommendation_response.id
@@ -213,6 +247,11 @@ def get_level_recommendation(rec, level):
     return getattr(rec, f'level_{level}_recommendation', None)
 
 app.jinja_env.globals.update(get_level_recommendation=get_level_recommendation)
+
+# Register blueprints
+app.register_blueprint(update_rules_bp)
+app.register_blueprint(visualize_rules_bp)
+app.register_blueprint(list_all_recommendations_bp)
 
 if __name__ == '__main__':
     app.run(debug=True)
