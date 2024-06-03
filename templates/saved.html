@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Method Recommender</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Project Method Recommender</h1>
+        <form action="/recommend" method="post">
+            <label for="project_type">Project Type:</label>
+            <select name="project_type" id="project_type" required>
+                <option value="software">Software</option>
+                <option value="manufacturing">Manufacturing</option>
+                <option value="design">Design</option>
+            </select>
+
+            <label for="complexity">Complexity:</label>
+            <select name="complexity" id="complexity" required>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+            </select>
+
+            <label for="team_size">Team Size:</label>
+            <input type="number" name="team_size" id="team_size" min="1" required>
+
+            <button type="submit">Recommend Method</button>
+        </form>
+
+        {% if method %}
+        <div class="panel">
+            <h2>Ongoing Project Recommendation</h2>
+            <p>Recommended Method: <strong>{{ method }}</strong></p>
+        </div>
+        {% endif %}
+
+        <div class="container">
+            <h2>Previous Recommendations</h2>
+            <div class="small-text">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Project Type</th>
+                            <th>Complexity</th>
+                            <th>Team Size</th>
+                            <th>Recommended Method</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for project in projects %}
+                            <tr>
+                                <td>{{ project.id }}</td>
+                                <td>{{ project.project_type }}</td>
+                                <td>{{ project.complexity }}</td>
+                                <td>{{ project.team_size }}</td>
+                                <td>{{ project.recommended_method }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

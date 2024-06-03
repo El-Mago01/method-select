@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}View Recommendation{% endblock %}
+
+{% block content %}
+    <h1>Project: {{ recommendation.project_name }}</h1>
+    <h2>Project Leader: {{ recommendation.project_leader }}</h2>
+    <p>Added on: {{ recommendation.date_added }}</p>
+    
+    <h3>Level {{ level }} Recommendation: {{ get_level_recommendation(recommendation, level) }}</h3>
+    {% set recommendation_file = "high_level_methods.json" if level == 1 else get_level_recommendation(recommendation, level).replace(' ', '_').lower() + '.json' %}
+    <form method="post" action="{{ url_for('view_recommendation', rec_id=recommendation.id) }}">
+        <input type="hidden" name="level" value="{{ level }}">
+        {% for param in parameters %}
+            <div class="form-group">
+                <label for="{{ param.id }}">{{ param.question }}</label>
+                {% if param.type == 'select' %}
+                    <select name="{{ param.id }}" id="{{ param.id }}">
+                        {% for option in param.options %}
+                            <option value="{{ option }}" {% if levels_data['level_' ~ level ~ '_data'] and levels_data['level_' ~ level ~ '_data'].get(param.id) == option %}selected{% endif %}>{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                {% elif param.type == 'number' %}
+                    <input type="number" name="{{ param.id }}" id="{{ param.id }}" min="{{ param.min }}" max="{{ param.max }}" value="{{ levels_data['level_' ~ level ~ '_data'].get(param.id) if levels_data['level_' ~ level ~ '_data'] else '' }}">
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit">Get Next Recommendation</button>
+    </form>
+{% endblock %}

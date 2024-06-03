@@ -18,7 +18,7 @@
                 <tbody>
                     {% for rec in recommendations %}
                     <tr>
-                        <td>{{ rec.project_name }}</td>
+                        <td><a href="{{ url_for('view_recommendation', rec_id=rec.id) }}">{{ rec.project_name }}</a></td>
                         <td>{{ rec.project_leader }}</td>
                         {% for level in range(1, max_level + 1) %}
                         <td>{{ get_level_recommendation(rec, level) }}</td>

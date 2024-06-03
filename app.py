@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 import json
 import os
 
@@ -14,19 +15,29 @@ app.secret_key = 'your_secret_key_here'  # Replace with your secret key
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///project_methods.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+#Initialize the database
 db = SQLAlchemy(app)
 
 # Define the database models
 class RecommendationResponse(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    project_name = db.Column(db.String(255))
+    project_name = db.Column(db.String(255), nullable=False, unique=True)
     project_leader = db.Column(db.String(255))
+    date_added=db.Column(db.DateTime, default=datetime.now)
+    level_1_data = db.Column(db.Text)  # Store JSON data as text
+    level_2_data = db.Column(db.Text)
+    level_3_data = db.Column(db.Text)
+    level_4_data = db.Column(db.Text)
+    level_5_data = db.Column(db.Text)
     level_1_recommendation = db.Column(db.String(255))
     level_2_recommendation = db.Column(db.String(255))
     level_3_recommendation = db.Column(db.String(255))
     level_4_recommendation = db.Column(db.String(255))
     level_5_recommendation = db.Column(db.String(255))
-  #  current_session = session
+
+    def __repr__(self) :
+        return '<Name %r>' % self.project_name
 
 # Drop and recreate the tables within the application context
 with app.app_context():
@@ -48,6 +59,67 @@ def index():
 def menu():
     return render_template('menu.html')
 
+@app.route('/view_recommendation/<int:rec_id>', methods=['GET', 'POST'])
+def view_recommendation(rec_id):
+    recommendation_response = RecommendationResponse.query.get_or_404(rec_id)
+    levels_data = {}
+
+    # Set session variables for project_name and project_leader
+    session['project_name'] = recommendation_response.project_name
+    session['project_leader'] = recommendation_response.project_leader
+
+    for level in range(1, MAX_LEVEL + 1):
+        data_attr = f'level_{level}_data'
+        recommendation_attr = f'level_{level}_recommendation'
+
+        levels_data[data_attr] = json.loads(getattr(recommendation_response, data_attr) or '{}')
+        session[f'level_{level}_data'] = levels_data[data_attr]
+        session[f'level_{level}_recommendation'] = getattr(recommendation_response, recommendation_attr)
+
+        print(f"Level {level} data: {levels_data[data_attr]}")
+        print(f"Level {level} recommendation: {session.get(f'level_{level}_recommendation')}")
+        print(f"now the session contains: {session}")
+
+    print("Clearing the recommendations in the database for levels 2-5")
+    # Clear recommendations for levels 2 to 5 if viewing level 1
+    for level in range(2, MAX_LEVEL + 1):
+        setattr(recommendation_response, f'level_{level}_data', None)
+        setattr(recommendation_response, f'level_{level}_recommendation', None)
+    db.session.commit()
+
+    if request.method == 'POST':
+        level = int(request.form.get('level'))
+        print(f"Received form data for level {level}: {request.form}")  # Debug print
+        data = {key: request.form[key] for key in request.form if key != 'level'}
+        setattr(recommendation_response, f'level_{level}_data', json.dumps(data))
+        db.session.commit()
+
+        new_recommendation, details, contact = get_recommendation(data, level)
+        setattr(recommendation_response, f'level_{level}_recommendation', new_recommendation)
+        db.session.commit()
+
+        session[f'level_{level}_recommendation'] = new_recommendation
+
+        next_level = level + 1
+        if next_level > MAX_LEVEL or new_recommendation is None:
+            return redirect(url_for('previous_recommendations'))
+
+        next_recommendation = new_recommendation
+        print(f"Next recommendation for level {next_level}: {next_recommendation}")  # Debug print
+        if next_recommendation:
+            return render_template('recommend.html', parameters=get_parameters(f"{next_recommendation.replace(' ', '_').lower()}.json"), level=next_level, recommendation=next_recommendation, data=data)
+        else:
+            return redirect(url_for('previous_recommendations'))
+
+    level = 1
+    data_attr = f'level_{level}_data'
+    levels_data = {data_attr: json.loads(getattr(recommendation_response, data_attr) or '{}')}
+    print(f"Rendering view_recommendation.html with levels_data: {levels_data}")  # Debug print
+
+    recommendation_file = "high_level_methods.json"
+    return render_template('view_recommendation.html', recommendation=recommendation_response, levels_data=levels_data, 
+                           parameters=get_parameters(recommendation_file), level=level, max_level=MAX_LEVEL)
+
 @app.route('/visualize_rules')
 def visualize_rules():
     # Placeholder function for visualizing the rules algorithm
@@ -65,16 +137,20 @@ def list_all_recommendations():
     recommendations_with_details = get_all_recommendations_with_details()
     return render_template('list_all_recommendations.html', recommendations=recommendations_with_details)
 
-
 @app.route('/recommend', methods=['POST'])
 def recommend():
+    print("Function recommend()")
     data = request.form.to_dict()
     level = int(data.pop('level'))
 
-    # Store project name and leader in the session
+    print(f"Current session: {session}")
+    # Store project name and leader in the session if they are provided
     if level == 1:
-        session['project_name'] = data.pop('project_name')
-        session['project_leader'] = data.pop('project_leader')
+        project_name = data.pop('project_name', None)
+        project_leader = data.pop('project_leader', None)
+        if project_name and project_leader:
+            session['project_name'] = project_name
+            session['project_leader'] = project_leader
 
     # Log the current level and data
     print(f"Current level: {level}")
@@ -83,41 +159,63 @@ def recommend():
     recommendation, details, contact = get_recommendation(data, level)
 
     if not recommendation:
-        print("No valid recommendation found for the provided inputs.")
+        print("No valid recommendation found for the provided inputs")
         return render_template('error.html', message="No valid recommendation found for the provided inputs. Please check your inputs and try again.", level=level)
 
-    next_level = level + 1
-    next_level_config_file = os.path.join('config', f"{recommendation.replace(' ', '_').lower()}.json")
-    print(f"Next level config file path: {next_level_config_file}")
+    print(f"Current recommendation: {recommendation}")
+    print(f"Details: {details}")
+    print(f"Contact: {contact}")
+    print(f"The following data will be stored in the database for level {level}:")
 
     session[f'level_{level}_data'] = data
     session[f'level_{level}_recommendation'] = recommendation
 
+    print(f"Here is the content of session: {session}")
+
     # Retrieve or create a RecommendationResponse object
     if 'recommendation_id' not in session:
-        recommendation_response = RecommendationResponse(
-            project_name=session['project_name'],
-            project_leader=session['project_leader']
-        )
-        db.session.add(recommendation_response)
-        db.session.commit()
-        session['recommendation_id'] = recommendation_response.id
+        if 'project_name' not in session or 'project_leader' not in session:
+            return render_template('error.html', message="Project name and leader are required.", level=level)
+
+        # Check if project name already exists
+        print(f"Checking the content of data: {session}")
+        existing_project = RecommendationResponse.query.filter_by(project_name=session['project_name']).first()
+        if existing_project:
+            # Use the existing project if found
+            recommendation_response = existing_project
+            session['recommendation_id'] = existing_project.id
+        else:
+            print("Creating a NEW RecommendationResponse object")
+            recommendation_response = RecommendationResponse(
+                project_name=session['project_name'],
+                project_leader=session['project_leader']
+            )
+            print("Storing and committing the data")
+            db.session.add(recommendation_response)
+            db.session.commit()
+            session['recommendation_id'] = recommendation_response.id
     else:
-        print(f"Storing the recommendation in the database. {session['recommendation_id']}")
+        print(f"Using an existing RecommendationResponse object")
         recommendation_response = RecommendationResponse.query.get(session['recommendation_id'])
+        db.session.add(recommendation_response)
         print(f"Storing the recommendation in the database. {recommendation_response}")
 
     # Update the corresponding level recommendation
+    setattr(recommendation_response, f'level_{level}_data', json.dumps(data))
     setattr(recommendation_response, f'level_{level}_recommendation', recommendation)
     db.session.commit()
+
+    next_level = level + 1
+    next_level_config_file = os.path.join('config', f"{recommendation.replace(' ', '_').lower()}.json")
+    print(f"Next level config file path: {next_level_config_file}")
 
     if level >= MAX_LEVEL or not os.path.exists(next_level_config_file):
         print(f"Reached maximum level {MAX_LEVEL} or no next level config file found. Showing final recommendation.")
         session[f'level_{level}_data'] = data
         session[f'level_{level}_recommendation'] = recommendation
         print(f"The following details will be provided {details}")
-        return render_template('final_recommendation.html', method=recommendation,details=details,contact=contact)
-    
+        return render_template('final_recommendation.html', method=recommendation, details=details, contact=contact)
+
     if os.path.exists(next_level_config_file):
         print(f"Found next level config file: {next_level_config_file}")
         session[f'level_{level}_data'] = data
@@ -125,7 +223,7 @@ def recommend():
         return render_template('recommend.html', parameters=get_parameters(f"{recommendation.replace(' ', '_').lower()}.json"), level=next_level, recommendation=recommendation, details=details, contact=contact)
     else:
         print(f"No next level config file found. Showing final recommendation.")
-        return render_template('final_recommendation.html', method=recommendation,details=details)
+        return render_template('final_recommendation.html', method=recommendation, details=details)
 
 @app.route('/previous_recommendations')
 def previous_recommendations():
@@ -176,14 +274,17 @@ def get_parameters(config_file):
     return config['parameters']
 
 def get_recommendation(data, level):
+    print(f"For get_recommendation function, this is the received level: {level}")
     if level == 1:
         config_file = 'high_level_methods.json'
     else:
-        recommendation = session.get(f'level_{level - 1}_recommendation')
-        if recommendation:
-            config_file = f"{recommendation.replace(' ', '_').lower()}.json"
+        previous_recommendation = session.get(f'level_{level - 1}_recommendation')
+        print(f"get_recommendation: input from session based on level_{level-1}_recommendation: {previous_recommendation}")
+        if previous_recommendation:
+            config_file = f"{previous_recommendation.replace(' ', '_').lower()}.json"
         else:
-            print(f"No recommendation found for level {level - 1}")
+            print(f"No recommendation found for level {level-1}")
+            print(f"This is the actual data for session: {session}")
             return None, 'no detailed information provided', 'no contact information provided'
 
     config_path = os.path.join('config', config_file)
@@ -227,18 +328,19 @@ def get_recommendation(data, level):
             detail_file = f"rd_{method.replace(' ', '_').lower()}.json"
             detail_path = os.path.join('recommendation_details', detail_file)
             try:
-                 with open(detail_path) as file:
+                with open(detail_path) as file:
                     details_json = file.read()
-                    print(f"Details JSON content: {details_json}")  # Debugging line
+                    print(f"Details JSON content: {details_json}")
                     details_json = json.loads(details_json)
                     details = details_json.get('details', 'no detailed information provided')
                     contact = details_json.get('contact', 'no contact information provided')
             except OSError:
                 details = 'no detailed information provided'
-                contact = 'no contacts supplied'
-            return method, details, contact   
+                contact = 'no contact information provided'
+            return method, details, contact
     print("No matching rule found.")
     return None, 'no detailed information provided', 'no contact information provided'
+
 
 def check_range(range_dict, value):
     value = int(value)
@@ -250,6 +352,7 @@ def get_level_recommendation(rec, level):
     return getattr(rec, f'level_{level}_recommendation', None)
 
 app.jinja_env.globals.update(get_level_recommendation=get_level_recommendation)
+app.jinja_env.globals.update(get_parameters=get_parameters)
 
 # Register blueprints
 app.register_blueprint(update_rules_bp)
