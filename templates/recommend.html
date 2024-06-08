@@ -4,13 +4,13 @@
 
 {% block content %}
         <h1>Next Level Questions</h1>
-        <h3>This is level: {{level}}</h3>
+        <h3>This is level: {{ level }}</h3>
         <form method="post" action="{{ url_for('recommend') }}" onsubmit="return checkFormData()">
             <div class="details-section">
                 <p>Based on your previous inputs, the recommended method(s) thus far is/are: <strong>{{ recommendation }}</strong></p><br>
                 <p><strong>Details: </strong> {{ details }}</p><p> </p>
                 <p><strong>For more assistance, please contact: </strong> {{ contact }}</p>
-                <p><strong>For more information, please use this link: </strong><a href="{{ link }}">{{ link }}</a></p></br> </p>
+                <p><strong>For more information, please use this link: </strong><a href="{{ link }}">{{ link }}</a></p><br> </p>
             </div>
             <input type="hidden" name="level" value="{{ level }}">
             {% for parameter in parameters %}
@@ -19,17 +19,16 @@
                 {% if parameter.type == 'select' %}
                 <select name="{{ parameter.id }}" id="{{ parameter.id }}">
                     {% for option in parameter.options %}
-                    <option value="{{ option }}" {% if data and data.get(parameter.id) == option %}selected{% endif %}>{{ option }}</option>
+                    <option value="{{ option }}" {% if session['level_' ~ level ~ '_data'] is defined and session['level_' ~ level ~ '_data'].get(parameter.id) == option %}selected{% endif %}>{{ option }}</option>
                     {% endfor %}
                 </select>
                 {% elif parameter.type == 'number' %}
-                <input type="number" name="{{ parameter.id }}" id="{{ parameter.id }}" min="{{ parameter.min }}" max="{{ parameter.max }}" value="{{ data.get(parameter.id) if data else '' }}">
+                <input type="number" id="{{ parameter.id }}" name="{{ parameter.id }}" min="{{ parameter.min }}" max="{{ parameter.max }}" value="{% if session['level_' ~ level ~ '_data'] is defined %}{{ session['level_' ~ level ~ '_data'].get(parameter.id) }}{% endif %}">
                 {% endif %}
             </div>
             {% endfor %}
             <button type="submit">Get Next Recommendation</button>
-            
-      </form>   
+        </form>   
         <script>
             function checkFormData() {
                 var formData = new FormData(document.forms[0]);
@@ -39,5 +38,4 @@
                 return true;
             }
         </script>
-    
 {% endblock %}

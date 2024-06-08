@@ -15,12 +15,21 @@
     ],
     "rules": [
         {
+            "knowledge_of_technology": "low",
+            "method": "Regiane"
+        },
+        {
             "iterations": "yes",
             "predictability": ["Coming 2 weeks", "Coming 4 weeks"],
             "method": "Scrum"
         },
         {
             "iterations": "yes",
+            "predictability": ["Coming 3 months", "Coming 6 months"],
+            "method": "KanBan"
+        },
+        {
+            "knowledge_of_technology": "low",
             "predictability": ["Coming 3 months", "Coming 6 months"],
             "method": "KanBan"
         },

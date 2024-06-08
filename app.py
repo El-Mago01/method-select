@@ -168,9 +168,13 @@ def list_all_recommendations():
 
 @app.route('/recommend', methods=['POST'])
 def recommend():
-    print("Function recommend()")
     data = request.form.to_dict()
     level = int(data.pop('level'))
+
+    # Store answers in session (new lines)
+    if f'level_{level}_data' not in session:
+        session[f'level_{level}_data'] = {}
+    session[f'level_{level}_data'].update(data)
 
     print(f"Current session: {session}")
     # Store project name and leader in the session if they are provided
@@ -185,8 +189,12 @@ def recommend():
     print(f"Current level: {level}")
     print(f"Received data: {data}")
 
+    # Collect all answers from previous levels (new lines)
+    all_data = {}
+    for i in range(1, level + 1):
+        all_data.update(session.get(f'level_{i}_data', {}))
 
-    recommendation, details, contact, link = get_recommendation(data, level)
+    recommendation, details, contact, link = get_recommendation(all_data, level)  # Change data to all_data
 
     if not recommendation:
         print("No valid recommendation found for the provided inputs")
@@ -238,7 +246,7 @@ def recommend():
 
     next_level = level + 1
     
-    configfile_to_find = f'{recommendation.replace(' ', '_').lower()}.json'
+    configfile_to_find = f'{recommendation.replace(" ", "_").lower()}.json'  # Change to double quotes
     print(f'Trying to locate config file {configfile_to_find}')
     config_path = None
     base_dir = 'config'
@@ -248,8 +256,7 @@ def recommend():
             break
         else:
             print(f"root {root} not found in  files={files}")
-            
-    next_level_config_file = os.path.join('config', f"{recommendation.replace(' ', '_').lower()}.json")
+
     print(f"Next level config file path: {config_path}")
 
     if level >= MAX_LEVEL or not config_path:
@@ -276,7 +283,8 @@ def recommend():
         )
     else:
         print(f"No next level config file found. Showing final recommendation.")
-        return render_template('final_recommendation.html', method=recommendation, details=details)
+        return render_template('final_recommendation.html', method=recommendation, details=details, contact=contact, link=link)
+
 
 @app.route('/previous_recommendations')
 def previous_recommendations():
@@ -368,9 +376,6 @@ def get_recommendation(data, level):
     if not config_path:
         print(f"Config file {config_file} not found in any subdirectory of {base_dir}.")
         return None, 'no detailed information provided', 'no contact information provided', 'no link provided'
-
-    print(f"Constructed config path: {config_path}")
-    print(f"Checking rules in {config_path} for level {level} with data: {data}")
 
     print(f"Constructed config path: {config_path}")
     print(f"Checking rules in {config_path} for level {level} with data: {data}")
