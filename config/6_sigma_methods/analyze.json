@@ -1,0 +1,34 @@
+{
+    "parameters": [
+        {
+            "id": "root_cause_analysis",
+            "question": "Have you identified the root causes?",
+            "type": "select",
+            "options": ["Yes", "No"]
+        },
+        {
+            "id": "hypothesis_testing",
+            "question": "Have you conducted hypothesis testing?",
+            "type": "select",
+            "options": ["Yes", "No"]
+        }
+    ],
+    "rules": [
+        {
+            "root_cause_analysis": "Yes",
+            "method": "Root Cause Analysis"
+        },
+        {
+            "hypothesis_testing": "Yes",
+            "method": "Hypothesis Testing"
+        },
+        {
+            "root_cause_analysis": "No",
+            "method": "Root Cause Analysis"
+        },
+        {
+            "hypothesis_testing": "No",
+            "method": "Hypothesis Testing"
+        }
+    ]
+}

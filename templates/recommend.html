@@ -4,11 +4,14 @@
 
 {% block content %}
         <h1>Next Level Questions</h1>
-        <h3>recommend.html proudly presents: {{level}}</h3>
-        <p>Based on your previous inputs, the recommended method(s) thus far is/are: <strong>{{ recommendation }}</strong></p>
-        <p>Details: {{ details }}</p><p> </p>
-        <p>For more assistance, please contact: {{ contact }}</p><p> </p>
+        <h3>This is level: {{level}}</h3>
         <form method="post" action="{{ url_for('recommend') }}" onsubmit="return checkFormData()">
+            <div class="details-section">
+                <p>Based on your previous inputs, the recommended method(s) thus far is/are: <strong>{{ recommendation }}</strong></p><br>
+                <p><strong>Details: </strong> {{ details }}</p><p> </p>
+                <p><strong>For more assistance, please contact: </strong> {{ contact }}</p>
+                <p><strong>For more information, please use this link: </strong><a href="{{ link }}">{{ link }}</a></p></br> </p>
+            </div>
             <input type="hidden" name="level" value="{{ level }}">
             {% for parameter in parameters %}
             <div class="form-group">
@@ -26,10 +29,6 @@
             {% endfor %}
             <button type="submit">Get Next Recommendation</button>
             
-            <form action="{{ url_for('back') }}" method="post" style="display: inline;">
-                <input type="hidden" name="level" value="{{ level }}">
-                <button type="submit">Back</button>
-            </form>
       </form>   
         <script>
             function checkFormData() {

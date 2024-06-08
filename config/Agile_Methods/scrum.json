@@ -1,0 +1,95 @@
+{
+    "parameters": [
+        {
+            "id": "PDCA",
+            "question": "Does it make sense to have iterations?",
+            "type": "select",
+            "options": ["yes", "no"]
+        },
+        {
+            "id": "Refinement",
+            "question": "Is the product backlog well known to the team?",
+            "type": "number",
+            "options": ["yes", "no"]
+        },
+        {
+            "id": "Review",
+            "question": "Do you have a possibility to get frequent feedback from customer/user or stakeholder?",
+            "type": "number",
+            "options": ["yes", "no"]
+        },
+        {
+            "id": "Reflection",
+            "question": "Does it make sense to have frequently reflection on team-efficiency?",
+            "type": "number",
+            "options": ["yes", "no"]
+        }
+    ],
+    "rules": [
+        {
+            "PDCA": "yes",
+            "Refinement": "yes",
+            "Review" : "yes",
+            "Reflection": "yes",
+            "method": "full-flextched Scrum"
+        },
+        {
+            "PDCA": "no",
+            "Refinement": "yes",
+            "Review" : "yes",
+            "Reflection": "yes",
+            "method": "full-flextched Scrum"
+        },
+        {
+            "knowledge_of_technology": "low",
+            "knowledge_of_customer_requirements": "medium",
+            "method": "agile_methods"
+        },
+        {
+            "knowledge_of_technology": "medium",
+            "knowledge_of_customer_requirements": "medium",
+            "method": "lean_methods"
+        },
+        {
+            "knowledge_of_technology": "high",
+            "knowledge_of_customer_requirements": "high",
+            "method": "classical_project_methods"
+        },
+        {
+            "knowledge_of_technology": "high",
+            "knowledge_of_customer_requirements": "medium",
+            "method": "classical_project_methods"
+        },
+        {
+            "knowledge_of_technology": "medium",
+            "knowledge_of_customer_requirements": "high",
+            "method": "classical_project_methods"
+        },
+        {
+            "project_type": "SW-design",
+            "team_size": {"min": 3},
+            "method": "agile_methods"
+        },
+        {
+            "project_type": "HW-design",
+            "team_size": {"min": 3},
+            "method": "classical_project_methods"
+        },
+        {
+            "project_type": "Internal improvement",
+            "method": "lean_methods"
+        },
+        {
+            "project_type": "Validation services",
+            "method": "classical_project_methods"
+        },
+        {
+            "project_type": "Research study",
+            "method": "classical_project_methods"
+        },
+        {
+            "team_size": {"max": 2},
+            "method": "lean_methods"
+        }
+    ]
+}

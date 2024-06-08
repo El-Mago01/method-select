@@ -9,11 +9,12 @@
 <body>
     <div class="navbar">
         <ul>
-            <li><a href="{{ url_for('index') }}">Get a recommendation</a></li>
-            <li><a href="{{ url_for('previous_recommendations') }}">Previous Recommendations</a></li>
-            <li><a href="{{ url_for('list_all_recommendations') }}">list all available recommendations</a></li>
+            <li><a href="{{ url_for('index') }}">Get recommendation for new project</a></li>
+            <li><a href="{{ url_for('previous_recommendations') }}">Change parameters existing project</a></li>
+            <li><a href="{{ url_for('list_all_recommendations') }}">List details of available recommendations</a></li>
             <li><a href="{{ url_for('visualize_rules') }}">Visualize Rules</a></li>
             <li><a href="{{ url_for('update_rules') }}">Update Rules</a></li>
+            <li><a href="{{ url_for('list_missing_json_files.list_missing_json_files') }}">List Missing JSON Files</a></li>
         </ul>
     </div>
     <div class="container">

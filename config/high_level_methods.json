@@ -4,7 +4,14 @@
             "id": "project_type",
             "question": "What type of project is it?",
             "type": "select",
-            "options": ["software", "manufacturing", "HW_design"]
+            "options": ["HW-design", "SW-design", "Validation services", "Research study", "Internal improvement"]
+        },
+        {
+            "id": "team_size",
+            "question": "How many core team members are involved in the project (including project manager)?",
+            "type": "number",
+            "min": 1,
+            "max": 100
         },
         {
             "id": "knowledge_of_technology",
@@ -13,82 +20,102 @@
             "options": ["low", "medium", "high"]
         },
         {
-            "id": "knowledge_of_customer",
-            "question": "How well do we know the needs of the customer",
+            "id": "knowledge_of_customer_requirements",
+            "question": "How well do we know the customer requirements?",
             "type": "select",
             "options": ["low", "medium", "high"]
         },
         {
-            "id": "team_size",
-            "question": "How many team members are involved in the project (including PL)?",
-            "type": "number",
-            "min": 1,
-            "max": 100
+            "id": "scope_defined",
+            "question": "Do you have the scope of the project clearly defined with the sponsor/stakeholders",
+            "type": "select",
+            "options": ["no", "somewhat", "yes"]
+        },
+        {
+            "id": "scope_agreed",
+            "question": "Was there a handshake on the scope of the project with the sponsor(s)/stakeholder(s)",
+            "type": "select",
+            "options": ["no", "somewhat", "yes"]
         }
     ],
     "rules": [
         {
-            "project_type": null,
+            "knowledge_of_technology": "medium",
+            "knowledge_of_customer_requirements": "medium",
+            "method": "lean_methods"
+        }, 
+        {
+            "knowledge_of_technology": ["low","medium"],
+            "knowledge_of_customer_requirements": null,
+            "method": "agile_methods"
+        },
+        {
             "knowledge_of_technology": null,
-            "knowledge_of_customer": "low",
-            "team_size": null,
-            "method": "agile methods"
+            "knowledge_of_customer_requirements": ["low", "medium"],
+            "method": "agile_methods"
         },
         {
-            "project_type": null,
-            "knowledge_of_technology": null,
-            "knowledge_of_customer": "medium",
-            "team_size": null,
-            "method": "agile methods"
-        },
-        {
-            "project_type": "software",
-            "knowledge_of_technology": null,
-            "knowledge_of_customer": "high",
-            "team_size": {"max": 2},
-            "method": "agile methods"
-        },
-        {
-            "project_type": "software",
-            "knowledge_of_technology": null,
-            "knowledge_of_customer": null,
-            "team_size": {"max": 10},
-            "method": "agile methods"
-        },
-        {
-            "project_type": "software",
-            "knowledge_of_technology": null,
-            "knowledge_of_customer": "high",
-            "team_size": {"min": 10},
-            "method": "agile methods"
-        },
-        {
-            "project_type": ["manufacturing", "HW_Design"],
-            "knowledge_of_technology": "high",
-            "team_size": null,
-            "knowledge_of_customer": "high",           
-            "method": "classical project methods"
-        },
-        {
-            "project_type": "manufacturing",
-            "knowledge_of_technology": "Medium",
-            "team_size": null,
-            "knowledge_of_customer": null,              
-            "method": "Six Sigma methods"
-        },
-        {
-            "project_type": "Design",
-            "knowledge_of_technology": "high",
-            "team_size": null,
-            "knowledge_of_customer": null,  
-            "method": "agile methods"
-        },
-        {
-            "project_type": "Design",
             "knowledge_of_technology": "low",
-            "team_size": null,
-            "knowledge_of_customer": "high",  
-            "method": "classical project methods"
+            "knowledge_of_customer_requirements": "medium",
+            "method": "agile_methods"
+        },
+
+        {
+            "knowledge_of_technology": "high",
+            "knowledge_of_customer_requirements": "high",
+            "method": "classical_project_methods"
+        },
+        {
+            "knowledge_of_technology": "high",
+            "knowledge_of_customer_requirements": "medium",
+            "method": "lean_methods"
+        },
+        {
+            "knowledge_of_technology": "medium",
+            "knowledge_of_customer_requirements": "high",
+            "method": "lean_methods"
+        },
+        {
+            "project_type": "SW-design",
+            "team_size": {"min": 3},
+            "method": "agile_methods"
+        },
+        {
+            "project_type": "HW-design",
+            "team_size": {"min": 3},
+            "method": "classical_project_methods"
+        },
+        {
+            "project_type": "Internal improvement",
+            "method": "lean_methods"
+        },
+        {
+            "project_type": "Validation services",
+            "method": "classical_project_methods"
+        },
+        {
+            "project_type": "Research study",
+            "method": "classical_project_methods"
+        },
+        {
+            "scope_agreed": ["no","somewhat"],
+            "scope_defined": ["no","somewhat"],
+            "method": "interview_stakeholders"
+        },
+        {
+            "scope_agreed": ["no","somewhat"],
+            "scope_defined": "yes",
+            "method": "Project_one_pager"
+        },
+        {
+            "scope_agreed": ["no","somewhat"],
+            "scope_defined": ["no","somewhat"],
+            "method": "lean_methods"
+        },
+        {
+            "scope_agreed": ["no","somewhat"],
+            "scope_defined": ["no","somewhat"],
+            "method": "lean_methods"
         }
     ]
 }

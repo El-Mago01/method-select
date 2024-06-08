@@ -1,0 +1,34 @@
+{
+    "parameters": [
+        {
+            "id": "control_plan",
+            "question": "Do you have a control plan in place?",
+            "type": "select",
+            "options": ["Yes", "No"]
+        },
+        {
+            "id": "process_monitoring",
+            "question": "Are you monitoring the process effectively?",
+            "type": "select",
+            "options": ["Yes", "No"]
+        }
+    ],
+    "rules": [
+        {
+            "control_plan": "Yes",
+            "method": "Control Plan"
+        },
+        {
+            "process_monitoring": "Yes",
+            "method": "Process Monitoring"
+        },
+        {
+            "control_plan": "No",
+            "method": "Control Plan"
+        },
+        {
+            "process_monitoring": "No",
+            "method": "Process Monitoring"
+        }
+    ]
+}

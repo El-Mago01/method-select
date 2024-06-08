@@ -1,0 +1,46 @@
+{
+    "parameters": [
+        {
+            "id": "project_risk",
+            "question": "What is the risk level of the project?",
+            "type": "select",
+            "options": ["High", "Medium", "Low"]
+        },
+        {
+            "id": "development_phase",
+            "question": "What development phase is the project in?",
+            "type": "select",
+            "options": ["Concept", "Design", "Implementation", "Testing"]
+        }
+    ],
+    "rules": [
+        {
+            "project_risk": "High",
+            "method": "Stage-Gate"
+        },
+        {
+            "project_risk": "Medium",
+            "method": "V-Model"
+        },
+        {
+            "project_risk": "Low",
+            "method": "Waterfall"
+        },
+        {
+            "development_phase": "Concept",
+            "method": "Stage-Gate"
+        },
+        {
+            "development_phase": "Design",
+            "method": "V-Model"
+        },
+        {
+            "development_phase": "Implementation",
+            "method": "Waterfall"
+        },
+        {
+            "development_phase": "Testing",
+            "method": "Waterfall"
+        }
+    ]
+}

@@ -1,0 +1,34 @@
+{
+    "parameters": [
+        {
+            "id": "data_collection_plan",
+            "question": "Do you have a data collection plan?",
+            "type": "select",
+            "options": ["Yes", "No"]
+        },
+        {
+            "id": "measurement_system_analysis",
+            "question": "Have you performed a measurement system analysis?",
+            "type": "select",
+            "options": ["Yes", "No"]
+        }
+    ],
+    "rules": [
+        {
+            "data_collection_plan": "Yes",
+            "method": "Data Collection Plan"
+        },
+        {
+            "measurement_system_analysis": "Yes",
+            "method": "Measurement System Analysis"
+        },
+        {
+            "data_collection_plan": "No",
+            "method": "Data Collection Plan"
+        },
+        {
+            "measurement_system_analysis": "No",
+            "method": "Measurement System Analysis"
+        }
+    ]
+}

@@ -1,0 +1,28 @@
+{
+    "parameters": [
+        {
+            "id": "visualize",
+            "question": "Have you created a KanBan board?",
+            "type": "select",
+            "options": ["yes","no"]
+        },
+        {
+            "id": "limit_wip",
+            "question": "Are you ensuring that there is not too much work done in parallel?",
+            "type": "select",
+            "options": ["yes", "no"]
+        }
+    ],
+    "rules": [
+        {
+            "visualize": "no",
+            "limit_wip": null,
+            "method": "Create a KanBan board"
+        },
+        {
+            "visualize": "yes",
+            "limit_wip": "no",
+            "method": "Add work in progress limits to your KanBan board"
+        }
+    ]
+}

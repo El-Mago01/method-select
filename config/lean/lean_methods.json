@@ -1,0 +1,42 @@
+{
+    "parameters": [
+        {
+            "id": "process_complexity",
+            "question": "What is the complexity of the process?",
+            "type": "select",
+            "options": ["High", "Medium", "Low"]
+        },
+        {
+            "id": "improvement_focus",
+            "question": "What is the focus of the improvement?",
+            "type": "select",
+            "options": ["Process efficiency", "Quality improvement", "Cost reduction"]
+        }
+    ],
+    "rules": [
+        {
+            "process_complexity": "High",
+            "method": "Six Sigma methods"
+        },
+        {
+            "process_complexity": "Medium",
+            "method": "KanBan_methods"
+        },
+        {
+            "process_complexity": "Low",
+            "method": "Kaizen"
+        },
+        {
+            "improvement_focus": "Process efficiency",
+            "method": "Six Sigma methods"
+        },
+        {
+            "improvement_focus": "Quality improvement",
+            "method": "Six Sigma methods"
+        },
+        {
+            "improvement_focus": "Cost reduction",
+            "method": "Kaizen"
+        }
+    ]
+}

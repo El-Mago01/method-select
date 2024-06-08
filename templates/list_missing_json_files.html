@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Missing JSON Files{% endblock %}
+
+{% block content %}
+    <h1>Methods without Corresponding JSON Files</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Filename</th>
+                <th>Exists in Config</th>
+                <th>Exists in Recommendation Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for filename, exists_in_config, detailed_file_exists in table_data %}
+                <tr>
+                    <td>{{ filename }}</td>
+                    <td>{{ 'Yes' if exists_in_config else 'No' }}</td>
+                    <td>{{ 'Yes' if detailed_file_exists else 'No' }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

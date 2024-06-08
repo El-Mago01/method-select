@@ -3,11 +3,10 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-        <h1>Error</h1>
+        <h1>Missing rules</h1>
         <p>{{ message }}</p>
-        <p>Please ensure that your inputs match the expected format and values.</p>
+        <p>Please contact the C2C COP to update the rules in the json files.</p>
         <div class="button-container">
-            <a href="/" class="button">Back to Home</a>
             <form action="{{ url_for('back') }}" method="post" class="inline-form">
                 <input type="hidden" name="level" value="{{ level }}">
                 <button type="submit" class="button">Back</button>

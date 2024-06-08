@@ -1,0 +1,33 @@
+{
+    "parameters": [
+        {
+        "id": "iterations",
+        "question": "Does it make sense to have frequent iterations where value is delivered?",
+        "type": "select",
+        "options": ["no", "yes"]
+        },
+        {
+            "id": "predictability",
+            "question": "What is the time-frame you feel confident to accurately plan for in the future for your project?",
+            "type": "select",
+            "options": ["Coming 2 weeks", "Coming 4 weeks", "Coming 8 weeks", "Coming 3 months", "Coming 6 months", "Coming year"]
+        }
+    ],
+    "rules": [
+        {
+            "iterations": "yes",
+            "predictability": ["Coming 2 weeks", "Coming 4 weeks"],
+            "method": "Scrum"
+        },
+        {
+            "iterations": "yes",
+            "predictability": ["Coming 3 months", "Coming 6 months"],
+            "method": "KanBan"
+        },
+        {
+            "iterations": "yes",
+            "predictability": ["Coming 2 weeks", "Coming 4 weeks"],
+            "method": "Classical Project Methods"
+        }
+        ]
+}

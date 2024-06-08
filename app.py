@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from list_missing_json_files import list_missing_json_files_bp 
 import json
 import os
 
@@ -16,7 +17,7 @@ app.secret_key = 'your_secret_key_here'  # Replace with your secret key
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///project_methods.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-#Initialize the database
+# Initialize the database
 db = SQLAlchemy(app)
 
 # Define the database models
@@ -24,7 +25,7 @@ class RecommendationResponse(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     project_name = db.Column(db.String(255), nullable=False, unique=True)
     project_leader = db.Column(db.String(255))
-    date_added=db.Column(db.DateTime, default=datetime.now)
+    date_added = db.Column(db.DateTime, default=datetime.now)
     level_1_data = db.Column(db.Text)  # Store JSON data as text
     level_2_data = db.Column(db.Text)
     level_3_data = db.Column(db.Text)
@@ -36,13 +37,33 @@ class RecommendationResponse(db.Model):
     level_4_recommendation = db.Column(db.String(255))
     level_5_recommendation = db.Column(db.String(255))
 
-    def __repr__(self) :
+    def __repr__(self):
         return '<Name %r>' % self.project_name
 
-# Drop and recreate the tables within the application context
-with app.app_context():
-    db.drop_all()
-    db.create_all()
+# Function to check if database needs to be reset
+def check_database():
+    try:
+        # Try to get the first record from the RecommendationResponse table
+        db.session.query(RecommendationResponse).first()
+    except Exception as e:
+        # If there is an exception, the table does not exist or is not in the correct format
+        return True
+    return False
+
+# Function to prompt user for database reset
+def prompt_reset_database():
+    reset_db = input("The database structure might have changed. Do you want to reset the database? (yes/no): ")
+    if reset_db.lower() == 'yes':
+        with app.app_context():
+            db.drop_all()
+            db.create_all()
+            print("Database has been reset.")
+    else:
+        print("Database has not been reset. Please ensure it matches the current model.")
+
+# Check if the database needs to be reset
+if check_database():
+    prompt_reset_database()
 
 # Maximum level constant
 MAX_LEVEL = 5
@@ -94,7 +115,8 @@ def view_recommendation(rec_id):
         setattr(recommendation_response, f'level_{level}_data', json.dumps(data))
         db.session.commit()
 
-        new_recommendation, details, contact = get_recommendation(data, level)
+        new_recommendation, details, contact, link = get_recommendation(data, level)
+        print(f"What details were received from get_recommendation? {new_recommendation}, {details}, {contact}, {link}.")
         setattr(recommendation_response, f'level_{level}_recommendation', new_recommendation)
         db.session.commit()
 
@@ -107,7 +129,14 @@ def view_recommendation(rec_id):
         next_recommendation = new_recommendation
         print(f"Next recommendation for level {next_level}: {next_recommendation}")  # Debug print
         if next_recommendation:
-            return render_template('recommend.html', parameters=get_parameters(f"{next_recommendation.replace(' ', '_').lower()}.json"), level=next_level, recommendation=next_recommendation, data=data)
+            return render_template('recommend.html', parameters=get_parameters(f"{next_recommendation.replace(' ', '_').lower()}.json"), 
+                                   level=next_level, 
+                                   recommendation=next_recommendation, 
+                                   data=data,
+                                   details=details, 
+                                   contact=contact, 
+                                   link=link
+                                   )
         else:
             return redirect(url_for('previous_recommendations'))
 
@@ -156,15 +185,17 @@ def recommend():
     print(f"Current level: {level}")
     print(f"Received data: {data}")
 
-    recommendation, details, contact = get_recommendation(data, level)
+
+    recommendation, details, contact, link = get_recommendation(data, level)
 
     if not recommendation:
         print("No valid recommendation found for the provided inputs")
-        return render_template('error.html', message="No valid recommendation found for the provided inputs. Please check your inputs and try again.", level=level)
+        return render_template('error.html', message=f"No valid recommendation found for the provided inputs for level {level}. Please check your inputs and try again.", level=level)
 
     print(f"Current recommendation: {recommendation}")
     print(f"Details: {details}")
     print(f"Contact: {contact}")
+    print(f"Link: {link}")
     print(f"The following data will be stored in the database for level {level}:")
 
     session[f'level_{level}_data'] = data
@@ -206,21 +237,43 @@ def recommend():
     db.session.commit()
 
     next_level = level + 1
+    
+    configfile_to_find = f'{recommendation.replace(' ', '_').lower()}.json'
+    print(f'Trying to locate config file {configfile_to_find}')
+    config_path = None
+    base_dir = 'config'
+    for root, _, files in os.walk(base_dir):
+        if configfile_to_find in files:
+            config_path = os.path.join(root, configfile_to_find)
+            break
+        else:
+            print(f"root {root} not found in  files={files}")
+            
     next_level_config_file = os.path.join('config', f"{recommendation.replace(' ', '_').lower()}.json")
-    print(f"Next level config file path: {next_level_config_file}")
+    print(f"Next level config file path: {config_path}")
 
-    if level >= MAX_LEVEL or not os.path.exists(next_level_config_file):
-        print(f"Reached maximum level {MAX_LEVEL} or no next level config file found. Showing final recommendation.")
+    if level >= MAX_LEVEL or not config_path:
+        if level >= MAX_LEVEL:
+            print(f"Reached maximum level {MAX_LEVEL}")
+        else: 
+            print(f"No next level config file found config_path={config_path}. Showing final recommendation.")
         session[f'level_{level}_data'] = data
         session[f'level_{level}_recommendation'] = recommendation
         print(f"The following details will be provided {details}")
-        return render_template('final_recommendation.html', method=recommendation, details=details, contact=contact)
+        return render_template('final_recommendation.html', method=recommendation, details=details, contact=contact, link=link)
 
-    if os.path.exists(next_level_config_file):
-        print(f"Found next level config file: {next_level_config_file}")
+    if config_path:
+        print(f"Found next level config file: {config_path}")
         session[f'level_{level}_data'] = data
         session[f'level_{level}_recommendation'] = recommendation
-        return render_template('recommend.html', parameters=get_parameters(f"{recommendation.replace(' ', '_').lower()}.json"), level=next_level, recommendation=recommendation, details=details, contact=contact)
+        return render_template(
+            'recommend.html', parameters=get_parameters(f"{recommendation.replace(' ', '_').lower()}.json"), 
+            level=next_level, 
+            recommendation=recommendation, 
+            details=details, 
+            contact=contact, 
+            link=link
+        )
     else:
         print(f"No next level config file found. Showing final recommendation.")
         return render_template('final_recommendation.html', method=recommendation, details=details)
@@ -240,7 +293,7 @@ def back():
     if level == 0:
         return redirect(url_for('index'))
 
-    previous_recommendation = session.get(f'level_{level-1}_recommendation')
+    previous_recommendation = session.get(f'level_{level}_recommendation')
     previous_data = session.get(f'level_{level}_data')
     print(f"The content of all the session data is: {dict(session)}")
     print(f"The previous recommendation is: {previous_recommendation}")
@@ -255,23 +308,41 @@ def back():
 
     if os.path.exists(previous_level_config_file):
         print(f"Found previous level config file: {previous_level_config_file}")
-        return render_template('recommend.html', parameters=get_parameters(f"{previous_recommendation.replace(' ', '_').lower()}.json"), level=level, recommendation=previous_recommendation, data=previous_data, pre_filled=previous_data)
-        #return render_template('recommend.html', parameters=get_parameters(previous_level_config_file),                                 level=level, recommendation=previous_recommendation, data=previous_data, pre_filled={'question_1': 'no', 'question_2': 'yes'})
+        return render_template(
+            'recommend.html', 
+            parameters=get_parameters(previous_level_config_file), 
+            level=level, 
+            recommendation=previous_recommendation, 
+            data=previous_data, 
+            pre_filled=previous_data
+        )
     else:
         print(f"No previous level config file found. Showing first recommendation.")
         session.clear()  # Clear the session to start fresh
-        return render_template('index.html', parameters=get_parameters('high_level_methods.json'), level=1, data=previous_data, pre_filled=previous_data)
+        return render_template(
+            'index.html', 
+            parameters=get_parameters('high_level_methods.json'), 
+            level=1, 
+            data=previous_data, 
+            pre_filled=previous_data
+        )
 
 def get_parameters(config_file):
-    config_path = os.path.join('config', config_file)
-    print(f"Loading parameters from config path: {config_path}")
-    try:
-        with open(config_path) as file:
-            config = json.load(file)
-    except OSError as e:
-        print(f"Error opening file {config_path}: {e}")
-        return []
-    return config['parameters']
+    base_dir = 'config'
+    for root, _, files in os.walk(base_dir):
+        if config_file in files:
+            config_path = os.path.join(root, config_file)
+            print(f"Loading parameters from config path: {config_path}")
+            try:
+                with open(config_path) as file:
+                    config = json.load(file)
+                return config['parameters']
+            except OSError as e:
+                print(f"Error opening file {config_path}: {e}")
+                return []
+    print(f"Config file {config_file} not found in any subdirectory of {base_dir}.")
+    return []
+
 
 def get_recommendation(data, level):
     print(f"For get_recommendation function, this is the received level: {level}")
@@ -285,9 +356,22 @@ def get_recommendation(data, level):
         else:
             print(f"No recommendation found for level {level-1}")
             print(f"This is the actual data for session: {session}")
-            return None, 'no detailed information provided', 'no contact information provided'
+            return None, 'no detailed information provided', 'no contact information provided', 'no link provided'
 
-    config_path = os.path.join('config', config_file)
+    config_path = None
+    base_dir = 'config'
+    for root, _, files in os.walk(base_dir):
+        if config_file in files:
+            config_path = os.path.join(root, config_file)
+            break
+
+    if not config_path:
+        print(f"Config file {config_file} not found in any subdirectory of {base_dir}.")
+        return None, 'no detailed information provided', 'no contact information provided', 'no link provided'
+
+    print(f"Constructed config path: {config_path}")
+    print(f"Checking rules in {config_path} for level {level} with data: {data}")
+
     print(f"Constructed config path: {config_path}")
     print(f"Checking rules in {config_path} for level {level} with data: {data}")
 
@@ -296,7 +380,7 @@ def get_recommendation(data, level):
             config = json.load(file)
     except OSError as e:
         print(f"Error opening file {config_path}: {e}")
-        return None, 'no detailed information provided', 'no contact information provided'
+        return None, 'no detailed information provided', 'no contact information provided', 'no link provided'
 
     def match_rule_value(rule_value, data_value):
         if data_value is None:
@@ -334,12 +418,14 @@ def get_recommendation(data, level):
                     details_json = json.loads(details_json)
                     details = details_json.get('details', 'no detailed information provided')
                     contact = details_json.get('contact', 'no contact information provided')
+                    link = details_json.get('link', 'no link provided')
             except OSError:
                 details = 'no detailed information provided'
                 contact = 'no contact information provided'
-            return method, details, contact
+                link = 'no link provided'
+            return method, details, contact, link
     print("No matching rule found.")
-    return None, 'no detailed information provided', 'no contact information provided'
+    return None, 'no detailed information provided', 'no contact information provided', 'no link provided'
 
 
 def check_range(range_dict, value):
@@ -357,6 +443,7 @@ app.jinja_env.globals.update(get_parameters=get_parameters)
 # Register blueprints
 app.register_blueprint(update_rules_bp)
 app.register_blueprint(visualize_rules_bp)
+app.register_blueprint(list_missing_json_files_bp)
 
 
 if __name__ == '__main__':
