@@ -1,0 +1,31 @@
+
+__pycache__
+method-select_old/
+
+# Environment variables and secrets
+.env
+.env.*
+
+# Virtual environments
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local databases
+*.sqlite
+*.sqlite3
+*.db
+instance/project_methods.db
+instance/
+
+# Logs and editor files
+*.log
+.idea/
+.vscode/
+.vs
+
+Documentation/chatGPT_window

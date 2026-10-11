@@ -45,13 +45,13 @@ class RecommendationResponse(db.Model):
 
 # Function to check if database needs to be reset
 def check_database():
-    try:
-        # Try to get the first record from the RecommendationResponse table
-        db.session.query(RecommendationResponse).first()
-    except Exception as e:
-        # If there is an exception, the table does not exist or is not in the correct format
-        return True
-    return False
+    with app.app_context():
+        try:
+            db.session.query(RecommendationResponse).first()
+            return False
+        except Exception as e:
+            print(f"Database check failed: {e}")
+            return True
 
 # Function to prompt user for database reset
 def prompt_reset_database():

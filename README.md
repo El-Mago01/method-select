@@ -126,9 +126,6 @@ On Windows:
 pip install -r requirements.txt
 ```
 
-The current dependency list may require updates for a clean installation. The application also imports `flask_sqlalchemy` 
-and `python-dotenv`, which should be included explicitly in `requirements.txt`.
-
 ### 4. Configure the Flask secret key
 
 Create a `.env` file in the project root:
