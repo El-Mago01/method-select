@@ -4,14 +4,17 @@ from datetime import datetime
 from list_missing_json_files import list_missing_json_files_bp 
 import json
 import os
-
+from dotenv import load_dotenv
 # Import blueprints
 from update_rules import update_rules_bp
 from visualize_rules import visualize_rules_bp
 from list_all_recommendations import get_unique_recommendations
 
+
+load_dotenv()
+secret_key = os.getenv('SECRET_KEY')
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'  # Replace with your secret key
+app.secret_key = secret_key  # Replace with your secret key
 
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///project_methods.db'
