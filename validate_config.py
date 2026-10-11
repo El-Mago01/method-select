@@ -55,17 +55,27 @@ def validate(root=ROOT):
     for name, paths in by_name.items():
         if len(paths) > 1:
             warnings.append(f"Ambiguous config filename {name}: {paths}")
+    # A details file is required for every unique recommendation, including endpoints.
+    # Report each missing method once rather than once per matching rule.
+    recommendations = {}
     for path, config in configs.items():
-        for index, rule in enumerate(config.get("rules", []), 1):
-            if not isinstance(rule, dict) or not isinstance(rule.get("method"), str):
-                continue
-            method = rule["method"]
-            filename = method.replace(" ", "_").lower() + ".json"
-            detail = details_dir / ("rd_" + filename)
-            if filename not in by_name and not detail.exists():
-                warnings.append(f"{path}: rule {index}: no next-level config or details for {method!r}")
-            elif not detail.exists():
-                warnings.append(f"{path}: rule {index}: missing optional details for {method!r}")
+        if not isinstance(config, dict):
+            continue
+        for rule in config.get("rules", []):
+            if isinstance(rule, dict) and isinstance(rule.get("method"), str):
+                recommendations.setdefault(rule["method"], path)
+    for method, source in sorted(recommendations.items()):
+        detail_name = "rd_" + method.replace(" ", "_").lower() + ".json"
+        detail = details_dir / detail_name
+        if not detail.is_file():
+            errors.append(f"Missing recommendation details for {method!r} (used in {source})")
+            continue
+        try:
+            payload = json.loads(detail.read_text(encoding="utf-8"))
+            if not isinstance(payload, dict) or not isinstance(payload.get("details"), str) or not payload["details"].strip():
+                errors.append(f"{detail}: missing non-empty 'details' description")
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append(f"{detail}: invalid details JSON: {exc}")
     return errors, warnings
 
 
