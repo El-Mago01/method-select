@@ -57,3 +57,22 @@ def test_no_match_returns_none():
     answers = {"knowledge_of_technology": "high", "iterations": "no",
                "predictability": "Coming year"}
     assert first_match("Agile_Methods/agile_methods.json", answers) is None
+
+
+def test_every_recommendation_has_details():
+    errors, _ = validate(ROOT)
+    assert not errors, "\\n".join(errors)
+
+
+def test_missing_details_is_an_error(tmp_path):
+    config_dir = tmp_path / "config"
+    config_dir.mkdir()
+    (tmp_path / "recommendation_details").mkdir()
+    (config_dir / "sample.json").write_text(
+        json.dumps({"parameters": [], "rules": [
+            {"method": "Unspecified Method"}, {"method": "Unspecified Method"}
+        ]}), encoding="utf-8"
+    )
+    errors, _ = validate(tmp_path)
+    missing = [error for error in errors if "Missing recommendation details" in error]
+    assert len(missing) == 1
