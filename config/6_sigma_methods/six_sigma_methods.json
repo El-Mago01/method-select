@@ -4,24 +4,38 @@
             "id": "Problem_defined",
             "question": "Has the problem been defined clearly",
             "type": "select",
-            "options": ["yes", "no"]
+            "options": [
+                "yes",
+                "no",
+                "somewhat"
+            ]
         },
         {
             "id": "stake_holder_analyzed",
             "question": "Do you know the stakeholders, their impact, interest and attitude towards your project (positive/negative)?",
             "type": "select",
-            "options": ["yes", "no", "somewhat"]
+            "options": [
+                "yes",
+                "no",
+                "somewhat"
+            ]
         }
     ],
     "rules": [
         {
-            "Problem_defined": ["no", "somewhat"],
-            "stake_holder_analyzed": null, 
+            "Problem_defined": [
+                "no",
+                "somewhat"
+            ],
+            "stake_holder_analyzed": null,
             "method": "Define"
         },
         {
             "Problem_defined": null,
-            "stake_holder_analyzed": ["no", "somewhat"], 
+            "stake_holder_analyzed": [
+                "no",
+                "somewhat"
+            ],
             "method": "Define"
         }
     ]
