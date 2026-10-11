@@ -4,7 +4,13 @@
             "id": "project_type",
             "question": "What type of project is it?",
             "type": "select",
-            "options": ["HW-design", "SW-design", "Validation services", "Research study", "Internal improvement"]
+            "options": [
+                "HW-design",
+                "SW-design",
+                "Validation services",
+                "Research study",
+                "Internal improvement"
+            ]
         },
         {
             "id": "team_size",
@@ -17,25 +23,41 @@
             "id": "knowledge_of_technology",
             "question": "How well is the technology known?",
             "type": "select",
-            "options": ["low", "medium", "high"]
+            "options": [
+                "low",
+                "medium",
+                "high"
+            ]
         },
         {
             "id": "knowledge_of_customer_requirements",
             "question": "How well do we know the customer requirements?",
             "type": "select",
-            "options": ["low", "medium", "high"]
+            "options": [
+                "low",
+                "medium",
+                "high"
+            ]
         },
         {
             "id": "scope_defined",
             "question": "Do you have the scope of the project clearly defined with the sponsor/stakeholders",
             "type": "select",
-            "options": ["no", "somewhat", "yes"]
+            "options": [
+                "no",
+                "somewhat",
+                "yes"
+            ]
         },
         {
             "id": "scope_agreed",
             "question": "Was there a handshake on the scope of the project with the sponsor(s)/stakeholder(s)",
             "type": "select",
-            "options": ["no", "somewhat", "yes"]
+            "options": [
+                "no",
+                "somewhat",
+                "yes"
+            ]
         }
     ],
     "rules": [
@@ -43,15 +65,21 @@
             "knowledge_of_technology": "medium",
             "knowledge_of_customer_requirements": "medium",
             "method": "lean_methods"
-        }, 
+        },
         {
-            "knowledge_of_technology": ["low","medium"],
+            "knowledge_of_technology": [
+                "low",
+                "medium"
+            ],
             "knowledge_of_customer_requirements": null,
             "method": "agile_methods"
         },
         {
             "knowledge_of_technology": null,
-            "knowledge_of_customer_requirements": ["low", "medium"],
+            "knowledge_of_customer_requirements": [
+                "low",
+                "medium"
+            ],
             "method": "agile_methods"
         },
         {
@@ -59,7 +87,6 @@
             "knowledge_of_customer_requirements": "medium",
             "method": "agile_methods"
         },
-
         {
             "knowledge_of_technology": "high",
             "knowledge_of_customer_requirements": "high",
@@ -77,12 +104,16 @@
         },
         {
             "project_type": "SW-design",
-            "team_size": {"min": 3},
+            "team_size": {
+                "min": 3
+            },
             "method": "agile_methods"
         },
         {
             "project_type": "HW-design",
-            "team_size": {"min": 3},
+            "team_size": {
+                "min": 3
+            },
             "method": "classical_project_methods"
         },
         {
@@ -98,23 +129,33 @@
             "method": "classical_project_methods"
         },
         {
-            "scope_agreed": ["no","somewhat"],
-            "scope_defined": ["no","somewhat"],
+            "scope_agreed": [
+                "no",
+                "somewhat"
+            ],
+            "scope_defined": [
+                "no",
+                "somewhat"
+            ],
             "method": "interview_stakeholders"
         },
         {
-            "scope_agreed": ["no","somewhat"],
+            "scope_agreed": [
+                "no",
+                "somewhat"
+            ],
             "scope_defined": "yes",
             "method": "Project_one_pager"
         },
         {
-            "scope_agreed": ["no","somewhat"],
-            "scope_defined": ["no","somewhat"],
-            "method": "lean_methods"
-        },
-        {
-            "scope_agreed": ["no","somewhat"],
-            "scope_defined": ["no","somewhat"],
+            "scope_agreed": [
+                "no",
+                "somewhat"
+            ],
+            "scope_defined": [
+                "no",
+                "somewhat"
+            ],
             "method": "lean_methods"
         }
     ]
